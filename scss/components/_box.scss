@@ -18,8 +18,8 @@
     max-width: 900px;
     border-radius: 9px;
     height: 80vh;
-    overflow-x: none;
-    overflow-y: scroll;
+    overflow: none;
+    
     margin: 0 auto;
     display: -ms-flexbox;
     display: -webkit-flex;
@@ -127,5 +127,11 @@
             -webkit-flex: 1;
             flex: 1 0 0;
         }
+    }
+
+    canvas {
+        -ms-flex: 1 0 0;
+        -webkit-flex: 1;
+        flex: 1 0 0;
     }
 }

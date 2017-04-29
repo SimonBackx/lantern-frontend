@@ -1,0 +1,33 @@
+#query-builder {
+    position: relative;
+     -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+     -khtml-user-select: none; /* Konqueror HTML */
+       -moz-user-select: none; /* Firefox */
+        -ms-user-select: none; /* Internet Explorer/Edge */
+            user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome and Opera */
+
+    .query {
+        padding: 0 20px;
+        border-radius: 20px;
+        height: 36px;
+        border: 2px solid $arapawa;
+        line-height: 36px;
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-size: 19px;
+        font-weight: 500;
+
+        &.empty {
+            border-style: dashed;
+            width: 50px;
+        }
+
+        &.operator {
+            background: $arapawa;
+            color: white;
+        }
+    }
+}

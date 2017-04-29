@@ -5,126 +5,27 @@
     <link rel="stylesheet" type="text/css" href="style/main.css">
     <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
 </head>
-<body>
+<body class="noselect">
     <div class="container">
         <div class="centered">
             <section class="box">
                 <header>
-                    <button class="icon close">Uitloggen</button>
-                    <h1>Queries</h1>
-                    <button class="icon plus">New query</button>
+                    <button class="icon close">Cancel</button>
+                    <h1>New query</h1>
+                    <button class="icon ok">Save</button>
                 </header>
                 
-                <table>
-                    <thead>
-                        <tr>
-                          <th>Name</th>
-                          <th>Results</th>
-                          <th>Age</th>
-                          <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                        <tr>
-                          <td>Email addresses</td>
-                          <td>13 (+2 new)</td>
-                          <td>3 days</td>
-                          <td></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <form>
+                    <label for="name">Name</label>
+                    <input type="text" name="name" id="name" placeholder="E.g. emails">
+                    <label>Query</label>
+                    <input type="hidden" name="query" value="">
+                </form>
+
+                <div id="query-builder"></div>
             </section>
         </div>
     </div>
+    <script type="text/javascript" src="javascript/query.js"></script>
 </body>
 </html>

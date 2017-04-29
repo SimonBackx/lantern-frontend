@@ -1,0 +1,32 @@
+
+form {
+    padding: 0 $horizontal-margin;
+
+    label {
+        display: block;
+        color: $persian-blue;
+        font-weight: 500;
+        font-size: 19px;
+    }
+
+    input {
+        font-size: 24px;
+        margin: 0;
+        padding: 10px 0;
+        width: 100%;
+        margin-bottom: 10px;
+
+        &::-webkit-input-placeholder { /* Chrome/Opera/Safari */
+          color: $whisper;
+        }
+        &::-moz-placeholder { /* Firefox 19+ */
+          color: $whisper;
+        }
+        &:-ms-input-placeholder { /* IE 10+ */
+          color: $whisper;
+        }
+        &:-moz-placeholder { /* Firefox 18- */
+          color: $whisper;
+        }
+    }
+}

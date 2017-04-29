@@ -88,6 +88,20 @@ body {
   -webkit-flex-direction: column;
   flex-direction: column;
   background: #FCFCFC; }
+  body.noselect {
+    -webkit-touch-callout: none;
+    /* iOS Safari */
+    -webkit-user-select: none;
+    /* Safari */
+    -khtml-user-select: none;
+    /* Konqueror HTML */
+    -moz-user-select: none;
+    /* Firefox */
+    -ms-user-select: none;
+    /* Internet Explorer/Edge */
+    user-select: none;
+    /* Non-prefixed version, currently
+       supported by Chrome and Opera */ }
 
 p, li {
   margin: 10px 0;
@@ -119,6 +133,32 @@ button {
     button.icon.plus {
       background-image: url("../images/plus.png"); }
 
+form {
+  padding: 0 25px; }
+  form label {
+    display: block;
+    color: #3119C3;
+    font-weight: 500;
+    font-size: 19px; }
+  form input {
+    font-size: 24px;
+    margin: 0;
+    padding: 10px 0;
+    width: 100%;
+    margin-bottom: 10px; }
+    form input::-webkit-input-placeholder {
+      /* Chrome/Opera/Safari */
+      color: #EAE9F3; }
+    form input::-moz-placeholder {
+      /* Firefox 19+ */
+      color: #EAE9F3; }
+    form input:-ms-input-placeholder {
+      /* IE 10+ */
+      color: #EAE9F3; }
+    form input:-moz-placeholder {
+      /* Firefox 18- */
+      color: #EAE9F3; }
+
 .container {
   display: table;
   width: 100%;
@@ -135,8 +175,7 @@ button {
   max-width: 900px;
   border-radius: 9px;
   height: 80vh;
-  overflow-x: none;
-  overflow-y: scroll;
+  overflow: none;
   margin: 0 auto;
   display: -ms-flexbox;
   display: -webkit-flex;
@@ -208,5 +247,42 @@ button {
       -ms-flex: 1 0 0;
       -webkit-flex: 1;
       flex: 1 0 0; }
+  .box canvas {
+    -ms-flex: 1 0 0;
+    -webkit-flex: 1;
+    flex: 1 0 0; }
+
+#query-builder {
+  position: relative;
+  -webkit-touch-callout: none;
+  /* iOS Safari */
+  -webkit-user-select: none;
+  /* Safari */
+  -khtml-user-select: none;
+  /* Konqueror HTML */
+  -moz-user-select: none;
+  /* Firefox */
+  -ms-user-select: none;
+  /* Internet Explorer/Edge */
+  user-select: none;
+  /* Non-prefixed version, currently
+     supported by Chrome and Opera */ }
+  #query-builder .query {
+    padding: 0 20px;
+    border-radius: 20px;
+    height: 36px;
+    border: 2px solid #1A0E64;
+    line-height: 36px;
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 19px;
+    font-weight: 500; }
+    #query-builder .query.empty {
+      border-style: dashed;
+      width: 50px; }
+    #query-builder .query.operator {
+      background: #1A0E64;
+      color: white; }
 
 /*# sourceMappingURL=main.css.map */
