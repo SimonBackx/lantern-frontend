@@ -1,0 +1,43 @@
+p, li {
+    margin: 10px 0;
+    line-height: 150%;
+}
+
+h1 {
+    font-size: 36px;
+    margin: 20px 0;
+    line-height: 120%;
+    font-weight: bold;
+}
+
+ul {
+    font-size: 20px;
+    margin: 20px 0;
+}
+
+button {
+    font-size: 19px;
+    font-weight: 500;
+
+    &.icon {
+        padding-left: 30px;
+        background-position: left center;
+        background-repeat: no-repeat;
+
+        &.close {
+            background-image: url("../images/close.png");
+        }
+
+        &.split {
+            background-image: url("../images/split.png");
+        }
+
+        &.ok {
+            background-image: url("../images/ok.png");
+        }
+
+        &.plus {
+            background-image: url("../images/plus.png");
+        }
+    }
+}

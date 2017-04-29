@@ -1,0 +1,19 @@
+body, html {
+    font-family: $font;
+    -webkit-font-smoothing: antialiased;
+    color: $color-text;
+    text-align: left;
+}
+
+body {
+    font-size: 16px;
+    min-height: 100vh;
+    display: block;
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+    background: $alabaster;
+}

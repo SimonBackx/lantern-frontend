@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="11px" height="11px" viewBox="0 0 11 11" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>close</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="close" transform="translate(5.485281, 5.485281) rotate(45.000000) translate(-5.485281, -5.485281) translate(-0.514719, -0.514719)" stroke="#1A0E64" stroke-width="2">
+            <path d="M0,6 L12,6" id="Path-3"></path>
+            <path d="M6,0 L6,12" id="Path-3"></path>
+        </g>
+    </g>
+</svg>

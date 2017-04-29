@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="16px" height="12px" viewBox="0 0 16 12" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 43.2 (39069) - http://www.bohemiancoding.com/sketch -->
+    <title>ok</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" stroke-linecap="round" stroke-linejoin="round">
+        <g id="ok" transform="translate(7.717514, 3.717514) rotate(45.000000) translate(-7.717514, -3.717514) translate(4.217514, -2.282486)" stroke-width="2" stroke="#1A0E64">
+            <polyline id="Path-3" points="7 0 7 12 0.656854249 11.6568542"></polyline>
+        </g>
+    </g>
+</svg>

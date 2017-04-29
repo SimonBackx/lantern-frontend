@@ -1,0 +1,1 @@
+sass --watch scss:public/style
