@@ -266,7 +266,10 @@ form {
   /* Internet Explorer/Edge */
   user-select: none;
   /* Non-prefixed version, currently
-     supported by Chrome and Opera */ }
+     supported by Chrome and Opera */
+  -ms-flex: 1 0 0;
+  -webkit-flex: 1;
+  flex: 1 0 0; }
   #query-builder .query {
     padding: 0 20px;
     border-radius: 20px;
@@ -294,5 +297,12 @@ form {
     #query-builder .query.operator {
       background: #1A0E64;
       color: white; }
+
+#query-builder-canvas {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0; }
 
 /*# sourceMappingURL=main.css.map */

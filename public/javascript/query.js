@@ -129,8 +129,21 @@ Query.prototype.find = function(y) {
     return this;
 }
 
-
 Query.prototype.draw = function(ctx) {
+    ctx.strokeStyle = whisper;
+    ctx.lineWidth = 2;
+
+    ctx.beginPath();
+    ctx.moveTo(this.x, this.y + boxHeight/2);
+
+    if (this.parent === null) {
+        ctx.lineTo(0, this.y + boxHeight/2);
+    } else {
+        ctx.lineTo(this.x, this.parent.y + boxHeight/2);
+    }
+
+    ctx.stroke();
+    ctx.closePath();
 }
 
 Query.prototype.setOffset = function(x, y, container) {
@@ -259,6 +272,9 @@ OperatorQuery.prototype.calculatePosition = function(x, y) {
 }
 
 OperatorQuery.prototype.draw = function(ctx) {
+    this.first.draw(ctx);
+    Query.prototype.draw.call(this, ctx);
+    this.last.draw(ctx);
 }
 
 OperatorQuery.prototype.find = function(y) {
@@ -303,22 +319,25 @@ OperatorQuery.prototype.restoreSimulation = function() {
 
 var rootQuery = null;
 
-/*
-var canvasElement = document.getElementById('query-builder');
 
-function updateCanvasSize() {
-    canvasElement.width = canvasElement.offsetWidth;
-    canvasElement.height = canvasElement.offsetHeight;
-}
-window.onresize = function(event) {
-    updateCanvasSize();
-    op.draw(canvasElement.getContext("2d"));
-};
-*/
 
 var queryBuilder = document.getElementById('query-builder');
 
 if (queryBuilder) {
+    var queryBuilderCanvas = document.getElementById('query-builder-canvas');
+    function updateCanvasSize() {
+        queryBuilderCanvas.width = queryBuilder.offsetWidth;
+        queryBuilderCanvas.height = queryBuilder.offsetHeight;
+        queryBuilderCanvas.style.width = queryBuilder.offsetWidth;
+        queryBuilderCanvas.style.height = queryBuilder.offsetHeight;
+    }
+    updateCanvasSize();
+
+    window.onresize = function(event) {
+        updateCanvasSize();
+        rootQuery.draw(queryBuilderCanvas.getContext("2d"));
+    };
+
     var myLeft = new Query();
     var myRight = new Query();
     var op = new OperatorQuery(myLeft, myRight);
@@ -329,9 +348,6 @@ if (queryBuilder) {
     var extra2 = new OperatorQuery(new Query(), new Query());
     extra_op = new OperatorQuery(extra, extra2);
     rootQuery.setFirst(extra_op);
-
-
-
     updateBuilder();
 }
 
@@ -339,6 +355,7 @@ if (queryBuilder) {
 function updateBuilder()  {
     rootQuery.calculatePosition(25, 10, false);
     rootQuery.step(queryBuilder);
+    rootQuery.draw(queryBuilderCanvas.getContext("2d"));
 }
 
 var animationInterval = null;
@@ -354,9 +371,9 @@ function animationLoop() {
         clearInterval(animationInterval);
         animationInterval = null;
     }
-    //rootQuery.draw(canvasElement.getContext("2d"));
+    queryBuilderCanvas.getContext("2d").clearRect(0, 0, queryBuilderCanvas.width, queryBuilderCanvas.height);
+    rootQuery.draw(queryBuilderCanvas.getContext("2d"));
 }
-
 
 function canSwitchQueries(first, last) {
     if (first.hasParent(last) || last.hasParent(first)) {
