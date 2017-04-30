@@ -19,6 +19,15 @@
         top: 0;
         font-size: 19px;
         font-weight: 500;
+        cursor: -webkit-grab; /* Chrome 1-21, Safari 4+ */
+        cursor:    -moz-grab; /* Firefox 1.5-26 */
+        cursor:         grab; /* W3C standards syntax, should come least */
+
+        &:active {
+            cursor: -webkit-grabbing;
+            cursor:    -moz-grabbing;
+            cursor:         grabbing;
+        }
 
         &.empty {
             border-style: dashed;

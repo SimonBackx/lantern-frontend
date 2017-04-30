@@ -1,6 +1,6 @@
 var boxHeight = 40;
 var boxMargin = 15;
-var indentWidth = 30;
+var indentWidth = 40;
 var arapawa = "#1A0E64";
 var whisper = "#EAE9F3";
 
@@ -44,6 +44,18 @@ document.addEventListener("mousedown", function(event){
 
 document.addEventListener("mousemove", function(){
     if (currentMovingQuery) {
+        var y = event.pageY - queryBuilder.documentOffsetTop;
+        var query = rootQuery.find(y);
+
+        if (canSwitchQueries(currentMovingQuery, query)) {
+            rootQuery.calculatePosition(25, 10, false);
+            query.setMovingOffset(currentMovingQuery.calculatedX - query.calculatedX + 20, currentMovingQuery.calculatedY - query.calculatedY);
+            needsAnimation();
+        } else {
+            rootQuery.calculatePosition(25, 10, false);
+            needsAnimation();
+        }
+
         currentMovingQuery.setOffset(event.pageX - mouseStartX, event.pageY - mouseStartY);
     }
 }, false);
@@ -62,11 +74,14 @@ document.addEventListener("mouseup", function(){
 
 
 function Query() {
-    this.type = "Empty query"
+    this.type = "Query"
     this.x = null;
     this.y = null;
     this.goalX = 0;
     this.goalY = 0;
+
+    this.calculatedX = 0;
+    this.calculatedY = 0;
 
     this.selected = false;
 
@@ -84,6 +99,9 @@ Query.prototype.calculatePosition = function(x, y) {
 
     this.goalX = x;
     this.goalY = y;
+
+    this.calculatedX = this.goalX;
+    this.calculatedY = this.goalY;
 
     if (this.x === null && this.y === null) {
         this.x = x;
@@ -116,9 +134,14 @@ Query.prototype.draw = function(ctx) {
 }
 
 Query.prototype.setOffset = function(x, y, container) {
-    this.x = this.goalX + x;
-    this.y = this.goalY + y;
+    this.x = this.calculatedX + x;
+    this.y = this.calculatedY + y;
     this.updateDOM(container);
+}
+
+Query.prototype.setMovingOffset = function(x, y, container) {
+    this.goalX = this.calculatedX + x;
+    this.goalY = this.calculatedY + y;
 }
 
 Query.prototype.updateDOM = function(container) {
@@ -126,22 +149,20 @@ Query.prototype.updateDOM = function(container) {
         container.appendChild(this.element);
     }
 
-    if (this.selected || this.simulate) {
-        this.element.style.background = "red";
-    } else {
-        this.element.style.background = "";
-    }
-
     this.element.style.left = this.x+"px";
     this.element.style.top = this.y+"px";
 }
 
 Query.prototype.step = function(container) {
+    if (this.selected) {
+        return;
+    }
+
     var k = 1
     var deltaX = this.x - this.goalX;
     var deltaY = this.y - this.goalY;
 
-    var c = 12
+    var c = 6
     var Fx = -k * deltaX - c * this.velocityX;
     var Fy = -k * deltaY - c * this.velocityY;
 
@@ -183,6 +204,9 @@ function OperatorQuery(first, last) {
     Query.call(this);
     this.setFirst(first);
     this.setLast(last);
+    this.firstHeight = 0;
+    this.lastHeight = 0;
+    this.type = "OperatorQuery"
 
     this.operator = AND_OPERATOR;
 
@@ -213,10 +237,13 @@ OperatorQuery.prototype.setLast = function(query) {
 }
 
 OperatorQuery.prototype.calculatePosition = function(x, y) {
-    var heightFirst = this.first.calculatePosition(x + indentWidth, y);
+    this.firstHeight = this.first.calculatePosition(x + indentWidth, y);
 
     this.goalX = x;
-    this.goalY = y + heightFirst + boxMargin;
+    this.goalY = y + this.firstHeight + boxMargin;
+
+    this.calculatedX = this.goalX;
+    this.calculatedY = this.goalY;
 
     if (this.x === null && this.y === null) {
         this.x = this.goalX;
@@ -227,18 +254,18 @@ OperatorQuery.prototype.calculatePosition = function(x, y) {
         }
     }
 
-    var heightLast = this.last.calculatePosition(this.goalX + indentWidth, this.goalY + boxMargin + boxHeight);
-    return boxHeight + heightFirst + boxMargin*2 + heightLast;
+    this.lastHeight = this.last.calculatePosition(this.goalX + indentWidth, this.goalY + boxMargin + boxHeight);
+    return boxHeight + this.firstHeight + boxMargin*2 + this.lastHeight;
 }
 
 OperatorQuery.prototype.draw = function(ctx) {
 }
 
 OperatorQuery.prototype.find = function(y) {
-    if (y < this.goalY) {
+    if (y < this.calculatedY) {
         return this.first.find(y);
     }
-    if (y > this.goalY + boxHeight) {
+    if (y > this.calculatedY + boxHeight) {
         return this.last.find(y);
     }
     return this;
@@ -250,7 +277,17 @@ OperatorQuery.prototype.setOffset = function(x, y, container) {
     this.last.setOffset(x, y, container);
 }
 
+OperatorQuery.prototype.setMovingOffset = function(x, y, container) {
+    this.first.setMovingOffset(x, y,container);
+    Query.prototype.setMovingOffset.call(this, x, y, container);
+    this.last.setMovingOffset(x, y, container);
+}
+
 OperatorQuery.prototype.step = function(container) {
+    if (this.selected) {
+        return;
+    }
+
     var f = this.first.step(container);
     var m = Query.prototype.step.call(this, container);
 
@@ -320,8 +357,16 @@ function animationLoop() {
     //rootQuery.draw(canvasElement.getContext("2d"));
 }
 
-function switchQueries(first, last) {
+
+function canSwitchQueries(first, last) {
     if (first.hasParent(last) || last.hasParent(first)) {
+        return false;
+    }
+    return true;
+}
+
+function switchQueries(first, last) {
+    if (!canSwitchQueries(first, last)) {
         return;
     }
 
