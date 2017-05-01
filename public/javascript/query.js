@@ -77,6 +77,28 @@ Query.prototype.find = function(y) {
     return this;
 }
 
+Query.prototype.split = function() {
+    var replace = this.replace;
+    var operator = new OperatorQuery(this, new Query());
+    replace.call(this, operator);
+}
+
+Query.prototype.removeDOM = function() {
+    if (this.element)
+        this.element.parentNode.removeChild(this.element);
+}
+
+Query.prototype.remove = function() {
+    this.replace(null);
+    this.removeDOM();
+}
+
+Query.prototype.replaceWith = function(query) {
+    this.replace(query);
+    if (this.element)
+        this.element.parentNode.removeChild(this.element);
+}
+
 Query.prototype.draw = function(ctx) {
     ctx.strokeStyle = whisper;
     ctx.lineWidth = 2;
@@ -188,6 +210,10 @@ OperatorQuery.prototype.setFirst = function(query) {
 
     var me = this;
     query.replace = function(q) {
+        if (q === null) {
+            me.replaceWith(me.last);
+            return;
+        }
         me.setFirst(q);
     };
 }
@@ -198,6 +224,10 @@ OperatorQuery.prototype.setLast = function(query) {
 
     var me = this;
     query.replace = function(q) {
+        if (q === null) {
+            me.replaceWith(me.first);
+            return;
+        }
         me.setLast(q);
     };
 }
@@ -228,6 +258,12 @@ OperatorQuery.prototype.draw = function(ctx) {
     this.first.draw(ctx);
     Query.prototype.draw.call(this, ctx);
     this.last.draw(ctx);
+}
+
+OperatorQuery.prototype.removeDOM = function() {
+    this.first.removeDOM();
+    Query.prototype.removeDOM.call(this);
+    this.last.removeDOM();
 }
 
 OperatorQuery.prototype.find = function(y) {
@@ -386,7 +422,31 @@ for (i = 0; i < inputElements.length; i++) {
     });
 }
 
+document.getElementById('split-button').addEventListener("click", function() {
+    if (!selectedQuery) {
+        return;
+    }
+    selectedQuery.split();
+    setSelectedQuery(selectedQuery.parent);
+    updateBuilder();
+});
+
+document.getElementById('remove-button').addEventListener("click", function() {
+    if (!selectedQuery) {
+        return;
+    }
+    selectedQuery.remove();
+    setSelectedQuery(null);
+    updateBuilder();
+});
+
 function setSelectedQuery(query) {
+    if (query === null) {
+        queryBuilderMenu.style.display = "none";
+        return;
+    }
+    queryBuilderMenu.style.display = "";
+
     selectedQuery = query;
     queryBuilderMenuType.value = query.type;
     queryBuilderMenu.className = query.type+"-selected";
@@ -394,9 +454,15 @@ function setSelectedQuery(query) {
     for (i = 0; i < inputElements.length; i++) {
         var element = inputElements[i];
         var prop = element.getAttribute("data-property");
-        if (!prop || !query[prop]) {
+        if (!prop) {
             continue;
         }
+
+        if (!query[prop]) {
+            element.value = "";
+            continue;
+        }
+
         var type = element.getAttribute("data-type");
         if (type && type == "array") {
             element.value = query[prop].join("\n");
@@ -404,6 +470,17 @@ function setSelectedQuery(query) {
             element.value = query[prop];
         }
     }
+}
+
+function setRootQuery(query) {
+    query.replace = function(q) {
+        if (q === null) {
+            return;
+        }
+        setRootQuery(q);
+    }
+    query.parent = null;
+    rootQuery = query;
 }
 
 var mouseStartX = 0;
@@ -497,7 +574,7 @@ if (queryBuilder) {
     var myRight = new Query();
     var op = new OperatorQuery(myLeft, myRight);
     
-    rootQuery = op;
+    setRootQuery(op);
 
     var extra = new OperatorQuery(new Query(), new Query());
     var extra2 = new OperatorQuery(new Query(), new Query());

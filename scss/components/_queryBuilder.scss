@@ -10,6 +10,7 @@
     -ms-flex: 1 0 0;
     -webkit-flex: 1;
     flex: 1 0 0;
+    overflow: hidden;
 
     .query {
         padding: 0 20px;
@@ -75,10 +76,24 @@
     bottom: 0;
     width: 300px;
     background: $selago;
-    border: 2px solid $arapawa;
+    border: 2px solid $whisper;
     border-bottom: 0;
     border-right: 0;
     padding: 40px 25px;
+    border-top-left-radius: 15px;
+
+    display: -ms-flexbox;
+    display: -webkit-flex;
+    display: flex;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
+
+    .content {
+        -ms-flex: 1 0 0;
+        -webkit-flex: 1;
+        flex: 1 0 0;
+    }
 
     .filter {
         display: none;
@@ -102,6 +117,14 @@
     &.text-selected {
         .filter.text {
             display: block;
+        }
+    }
+
+    footer {
+        text-align: center;
+
+        button:last-child {
+            margin-left: 20px;
         }
     }
 }

@@ -25,43 +25,50 @@
 				<div id="query-builder">
 					<canvas id="query-builder-canvas"></canvas>
 
-					<div id="query-builder-menu">
-						<label for="type-input">Type</label>
-						<label class="select-box">
-							<select name="type" id="type-input">
-								<option value="empty" selected>None</option>
-								<option value="regexp">Regexp</option>
-								<option value="text">Text</option>
-								<option value="list">List</option>
-								<option value="operator">Operator</option>
-							</select>
-						</label>
-
-						<div class="filter regexp">
-							<label>Regexp</label>
-							<input type="text" placeholder="Regexp" data-property="regexp">
-						</div>
-
-						<div class="filter text">
-							<label>Text</label>
-							<input type="text" placeholder="Text" data-property="text">
-						</div>
-
-						<div class="filter list">
-							<label>List</label>
-							<textarea data-property="list" data-type="array" placeholder="Enter a query per line."></textarea>
-							<p>Matches when one or more of the entered lines are found on a website.</p>
-						</div>
-
-						<div class="filter operator">
-							<label>Operator</label>
+					<div id="query-builder-menu" style="display: none;">
+						<div class="content">
+							<label for="type-input">Type</label>
 							<label class="select-box">
-								<select name="type" data-property="operator">
-									<option value="AND">And</option>
-									<option value="OR">Or</option>
+								<select name="type" id="type-input">
+									<option value="empty" selected>None</option>
+									<option value="regexp">Regexp</option>
+									<option value="text">Text</option>
+									<option value="list">List</option>
+									<option value="operator">Operator</option>
 								</select>
 							</label>
+
+							<div class="filter regexp">
+								<label>Regexp</label>
+								<input type="text" placeholder="Regexp" data-property="regexp">
+								<p><a href="https://github.com/google/re2/wiki/Syntax">Accepted syntax (RE2, Google)</a></p>
+							</div>
+
+							<div class="filter text">
+								<label>Text</label>
+								<input type="text" placeholder="Text" data-property="text">
+							</div>
+
+							<div class="filter list">
+								<label>List</label>
+								<textarea data-property="list" data-type="array" placeholder="Enter a query per line."></textarea>
+								<p>Matches when one or more of the entered lines are found on a website.</p>
+							</div>
+
+							<div class="filter operator">
+								<label>Operator</label>
+								<label class="select-box">
+									<select name="type" data-property="operator">
+										<option value="AND">And</option>
+										<option value="OR">Or</option>
+									</select>
+								</label>
+							</div>
 						</div>
+						<footer>
+							<button class="icon split" id="split-button">Split</button>
+							<button class="icon close" id="remove-button">Remove</button>
+						</footer>
 					</div>
 				</div>
 			</section>
