@@ -326,7 +326,7 @@ textarea {
     /* Firefox 1.5-26 */
     cursor: grab;
     /* W3C standards syntax, should come least */
-    max-width: 150px;
+    max-width: 250px;
     white-space: nowrap;
     overflow: hidden; }
     #query-builder .query:active {
