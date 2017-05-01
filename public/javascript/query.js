@@ -130,11 +130,11 @@ Query.prototype.step = function(container) {
         return false;
     }
 
-    var k = 1
+    var k = 2
     var deltaX = this.x - this.goalX;
     var deltaY = this.y - this.goalY;
 
-    var c = 6
+    var c = 10
     var Fx = -k * deltaX - c * this.velocityX;
     var Fy = -k * deltaY - c * this.velocityY;
 
@@ -279,9 +279,6 @@ function RegexpQuery() {
     Query.call(this);
     this.type = "regexp";
     this.regexp = "";
-
-    this.element.className = "regexp query";
-    this.element.innerText = this.regexp;
 }
 
 RegexpQuery.prototype = Object.create(Query.prototype);
@@ -289,6 +286,32 @@ RegexpQuery.prototype.updateDOM = function(container) {
     Query.prototype.updateDOM.call(this, container);
 
     this.element.innerText = this.regexp;
+}
+
+function TextQuery() {
+    Query.call(this);
+    this.type = "text";
+    this.text = "";
+}
+
+TextQuery.prototype = Object.create(Query.prototype);
+TextQuery.prototype.updateDOM = function(container) {
+    Query.prototype.updateDOM.call(this, container);
+
+    this.element.innerText = this.text;
+}
+
+function ListQuery() {
+    Query.call(this);
+    this.type = "list";
+    this.list = [];
+}
+
+ListQuery.prototype = Object.create(Query.prototype);
+ListQuery.prototype.updateDOM = function(container) {
+    Query.prototype.updateDOM.call(this, container);
+
+    this.element.innerText = "List["+this.list.length+"]";
 }
 
 var rootQuery = null;
@@ -316,10 +339,10 @@ queryBuilderMenuType.addEventListener("change", function() {
             replaceWith = new RegexpQuery();
             break;
         case "text":
-            //selectedQuery.replace(new Query());
+            replaceWith = new TextQuery();
             break;
         case "list":
-            //selectedQuery.replace(new Query());
+            replaceWith = new ListQuery();
             break;
     }
 
@@ -337,11 +360,18 @@ var updateInputElement = function() {
     if (!prop || !selectedQuery) {
         return;
     }
-    selectedQuery[prop] = this.value;
+
+    var type = this.getAttribute("data-type");
+    if (type && type == "array") {
+        var value = this.value;
+        selectedQuery[prop] = value.replace("\n\r", "\n").split("\n");
+    } else {
+        selectedQuery[prop] = this.value;
+    }
     updateBuilder();
 };
 
-var inputElements = queryBuilderMenu.querySelectorAll("input,select");
+var inputElements = queryBuilderMenu.querySelectorAll("input,select,textarea");
 var i;
 for (i = 0; i < inputElements.length; i++) {
     var element = inputElements[i];
@@ -364,10 +394,15 @@ function setSelectedQuery(query) {
     for (i = 0; i < inputElements.length; i++) {
         var element = inputElements[i];
         var prop = element.getAttribute("data-property");
-        if (!prop) {
+        if (!prop || !query[prop]) {
             continue;
         }
-        element.value = query[prop];
+        var type = element.getAttribute("data-type");
+        if (type && type == "array") {
+            element.value = query[prop].join("\n");
+        } else {
+            element.value = query[prop];
+        }
     }
 }
 

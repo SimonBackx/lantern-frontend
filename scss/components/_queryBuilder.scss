@@ -46,7 +46,7 @@
             
         }
 
-        &.regexp {
+        &.regexp, &.text, &.list {
             background: $whisper;
             color: $arapawa;
             border-color: $whisper;
@@ -91,6 +91,16 @@
     }
     &.operator-selected {
         .filter.operator {
+            display: block;
+        }
+    }
+    &.list-selected {
+        .filter.list {
+            display: block;
+        }
+    }
+    &.text-selected {
+        .filter.text {
             display: block;
         }
     }

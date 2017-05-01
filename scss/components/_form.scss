@@ -10,7 +10,8 @@ label {
     font-size: 19px;
 }
 
-input {
+
+input, textarea {
     font-size: 24px;
     padding: 10px 0;
     width: 100%;
@@ -30,6 +31,11 @@ input {
     &:-moz-placeholder { /* Firefox 18- */
       color: $whisper;
     }
+}
+
+textarea {
+    height: 200px;
+    resize: none;
 }
 
 .select-box {

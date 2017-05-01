@@ -142,25 +142,29 @@ label {
   font-weight: 500;
   font-size: 19px; }
 
-input {
+input, textarea {
   font-size: 24px;
   padding: 10px 0;
   width: 100%;
   margin: 0 0 10px 0;
   color: #1A0E64;
   font-weight: normal; }
-  input::-webkit-input-placeholder {
+  input::-webkit-input-placeholder, textarea::-webkit-input-placeholder {
     /* Chrome/Opera/Safari */
     color: #EAE9F3; }
-  input::-moz-placeholder {
+  input::-moz-placeholder, textarea::-moz-placeholder {
     /* Firefox 19+ */
     color: #EAE9F3; }
-  input:-ms-input-placeholder {
+  input:-ms-input-placeholder, textarea:-ms-input-placeholder {
     /* IE 10+ */
     color: #EAE9F3; }
-  input:-moz-placeholder {
+  input:-moz-placeholder, textarea:-moz-placeholder {
     /* Firefox 18- */
     color: #EAE9F3; }
+
+textarea {
+  height: 200px;
+  resize: none; }
 
 .select-box {
   font-size: 24px;
@@ -330,7 +334,7 @@ input {
     #query-builder .query.operator {
       background: #1A0E64;
       color: white; }
-    #query-builder .query.regexp {
+    #query-builder .query.regexp, #query-builder .query.text, #query-builder .query.list {
       background: #EAE9F3;
       color: #1A0E64;
       border-color: #EAE9F3; }
@@ -361,6 +365,10 @@ input {
   #query-builder-menu.regexp-selected .filter.regexp {
     display: block; }
   #query-builder-menu.operator-selected .filter.operator {
+    display: block; }
+  #query-builder-menu.list-selected .filter.list {
+    display: block; }
+  #query-builder-menu.text-selected .filter.text {
     display: block; }
 
 /*# sourceMappingURL=main.css.map */

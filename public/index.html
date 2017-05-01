@@ -39,7 +39,18 @@
 
 						<div class="filter regexp">
 							<label>Regexp</label>
-							<input type="text" name="regexp-input" placeholder="Regexp" data-property="regexp">
+							<input type="text" placeholder="Regexp" data-property="regexp">
+						</div>
+
+						<div class="filter text">
+							<label>Text</label>
+							<input type="text" placeholder="Text" data-property="text">
+						</div>
+
+						<div class="filter list">
+							<label>List</label>
+							<textarea data-property="list" data-type="array" placeholder="Enter a query per line."></textarea>
+							<p>Matches when one or more of the entered lines are found on a website.</p>
 						</div>
 
 						<div class="filter operator">
