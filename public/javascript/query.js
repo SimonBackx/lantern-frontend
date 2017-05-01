@@ -20,67 +20,8 @@ Object.defineProperty( Element.prototype, 'documentOffsetLeft', {
     }
 } );
 
-var mouseStartX = 0;
-var mouseStartY = 0;
-
-document.addEventListener("mousedown", function(event){
-    currentMovingQuery = null;
-
-    mouseStartX = event.pageX;
-    mouseStartY = event.pageY;
-
-    var offset = queryBuilder.documentOffsetTop;
-    var y = event.pageY - offset;
-
-    if (y < 0) {
-        return;
-    }
-
-    var query = rootQuery.find(y);
-    currentMovingQuery = query;
-    currentMovingQuery.selected = true;
-    updateBuilder();
-}, false);
-
-document.addEventListener("mousemove", function(){
-    if (currentMovingQuery) {
-        var y = event.pageY - queryBuilder.documentOffsetTop;
-        var query = rootQuery.find(y);
-
-        rootQuery.resetSimulation();
-
-        if (canSwitchQueries(currentMovingQuery, query)) {
-            currentMovingQuery.simulatedParent = query.parent;
-            query.simulatedParent = currentMovingQuery.parent;
-            
-            rootQuery.calculatePosition(25, 10, false);
-            query.setMovingOffset(currentMovingQuery.calculatedX - query.calculatedX + 20, currentMovingQuery.calculatedY - query.calculatedY);
-            needsAnimation();
-        } else {
-            rootQuery.calculatePosition(25, 10, false);
-            needsAnimation();
-        }
-
-        currentMovingQuery.setOffset(event.pageX - mouseStartX, event.pageY - mouseStartY);
-    }
-}, false);
-
-document.addEventListener("mouseup", function() {
-    rootQuery.resetSimulation();
-    if (currentMovingQuery) {
-        var offset = queryBuilder.documentOffsetTop;
-        var y = event.pageY - offset;
-        var query = rootQuery.find(y);
-        switchQueries(currentMovingQuery, query);
-        currentMovingQuery.selected = false;
-    }
-    currentMovingQuery = null;
-    updateBuilder();
-}, false);
-
-
 function Query() {
-    this.type = "Query"
+    this.type = "empty"
     this.x = null;
     this.y = null;
     this.goalX = 0;
@@ -175,11 +116,18 @@ Query.prototype.updateDOM = function(container) {
 
     this.element.style.left = this.x+"px";
     this.element.style.top = this.y+"px";
+
+    if (this === selectedQuery) {
+        this.element.className = this.type+" query selected";
+    } else {
+        this.element.className = this.type+" query";
+    }
 }
 
 Query.prototype.step = function(container) {
     if (this.selected) {
-        return;
+        this.updateDOM(container);
+        return false;
     }
 
     var k = 1
@@ -225,12 +173,11 @@ function OperatorQuery(first, last) {
     this.setLast(last);
     this.firstHeight = 0;
     this.lastHeight = 0;
-    this.type = "OperatorQuery"
+    this.type = "operator"
 
     this.operator = AND_OPERATOR;
 
     this.element.className = "operator query";
-    this.element.innerHTML = this.operator;
 }
 
 OperatorQuery.prototype = Object.create(Query.prototype);
@@ -307,7 +254,7 @@ OperatorQuery.prototype.setMovingOffset = function(x, y, container) {
 
 OperatorQuery.prototype.step = function(container) {
     if (this.selected) {
-        return;
+        return Query.prototype.step.call(this, container);
     }
 
     var f = this.first.step(container);
@@ -322,10 +269,179 @@ OperatorQuery.prototype.resetSimulation = function() {
     this.last.resetSimulation();
 }
 
-var rootQuery = null;
+OperatorQuery.prototype.updateDOM = function(container) {
+    Query.prototype.updateDOM.call(this, container);
 
+    this.element.innerText = this.operator;
+}
+
+function RegexpQuery() {
+    Query.call(this);
+    this.type = "regexp";
+    this.regexp = "";
+
+    this.element.className = "regexp query";
+    this.element.innerText = this.regexp;
+}
+
+RegexpQuery.prototype = Object.create(Query.prototype);
+RegexpQuery.prototype.updateDOM = function(container) {
+    Query.prototype.updateDOM.call(this, container);
+
+    this.element.innerText = this.regexp;
+}
+
+var rootQuery = null;
+var selectedQuery = null;
 
 var queryBuilder = document.getElementById('query-builder');
+var queryBuilderMenu = document.getElementById('query-builder-menu');
+var queryBuilderMenuType = document.getElementById('type-input');
+queryBuilderMenuType.addEventListener("change", function() {
+    if (selectedQuery === null || selectedQuery.type == "operator") {
+        return;
+    }
+
+    // Type aanpassen
+    var type = queryBuilderMenuType.value;
+    queryBuilderMenu.className = type+"-selected";
+
+    var replaceWith = selectedQuery;
+
+    switch(type) {
+        case "empty":
+            replaceWith = new Query();
+            break;
+        case "regexp":
+            replaceWith = new RegexpQuery();
+            break;
+        case "text":
+            //selectedQuery.replace(new Query());
+            break;
+        case "list":
+            //selectedQuery.replace(new Query());
+            break;
+    }
+
+    if (selectedQuery.element)
+        selectedQuery.element.parentNode.removeChild(selectedQuery.element);
+    selectedQuery.replace(replaceWith);
+    
+    setSelectedQuery(replaceWith);
+
+    updateBuilder();
+});
+
+var updateInputElement = function() {
+    var prop = this.getAttribute("data-property");
+    if (!prop || !selectedQuery) {
+        return;
+    }
+    selectedQuery[prop] = this.value;
+    updateBuilder();
+};
+
+var inputElements = queryBuilderMenu.querySelectorAll("input,select");
+var i;
+for (i = 0; i < inputElements.length; i++) {
+    var element = inputElements[i];
+    element.addEventListener("keydown", function() {
+        updateInputElement.call(this);
+    });
+    element.addEventListener("keyup", function() {
+        updateInputElement.call(this);
+    });
+    element.addEventListener("change", function() {
+        updateInputElement.call(this);
+    });
+}
+
+function setSelectedQuery(query) {
+    selectedQuery = query;
+    queryBuilderMenuType.value = query.type;
+    queryBuilderMenu.className = query.type+"-selected";
+
+    for (i = 0; i < inputElements.length; i++) {
+        var element = inputElements[i];
+        var prop = element.getAttribute("data-property");
+        if (!prop) {
+            continue;
+        }
+        element.value = query[prop];
+    }
+}
+
+var mouseStartX = 0;
+var mouseStartY = 0;
+
+var ignoreDown = false;
+
+queryBuilderMenu.addEventListener("mousedown", function(event){
+    ignoreDown = true;
+});
+queryBuilder.addEventListener("mousedown", function(event){
+    if (ignoreDown) {
+        ignoreDown = false;
+        return;
+    }
+
+    currentMovingQuery = null;
+
+    mouseStartX = event.pageX;
+    mouseStartY = event.pageY;
+
+    var offset = queryBuilder.documentOffsetTop;
+    var y = event.pageY - offset;
+
+    if (y < 0) {
+        return;
+    }
+
+    var query = rootQuery.find(y);
+    setSelectedQuery(query);
+    currentMovingQuery = query;
+    currentMovingQuery.selected = true;
+    updateBuilder();
+}, false);
+
+document.addEventListener("mousemove", function(){
+    if (currentMovingQuery) {
+        var y = event.pageY - queryBuilder.documentOffsetTop;
+        var query = rootQuery.find(y);
+
+        rootQuery.resetSimulation();
+
+        if (canSwitchQueries(currentMovingQuery, query)) {
+            currentMovingQuery.simulatedParent = query.parent;
+            query.simulatedParent = currentMovingQuery.parent;
+
+            rootQuery.calculatePosition(25, 10, false);
+            query.setMovingOffset(currentMovingQuery.calculatedX - query.calculatedX + 20, currentMovingQuery.calculatedY - query.calculatedY);
+            needsAnimation();
+        } else {
+            rootQuery.calculatePosition(25, 10, false);
+            needsAnimation();
+        }
+
+        currentMovingQuery.setOffset(event.pageX - mouseStartX, event.pageY - mouseStartY);
+    }
+}, false);
+
+document.addEventListener("mouseup", function() {
+    ignoreDown = false;
+    rootQuery.resetSimulation();
+    if (currentMovingQuery) {
+        var offset = queryBuilder.documentOffsetTop;
+        var y = event.pageY - offset;
+        var query = rootQuery.find(y);
+        switchQueries(currentMovingQuery, query);
+        currentMovingQuery.selected = false;
+    }
+    currentMovingQuery = null;
+    updateBuilder();
+}, false);
+
+
 
 if (queryBuilder) {
     var queryBuilderCanvas = document.getElementById('query-builder-canvas');

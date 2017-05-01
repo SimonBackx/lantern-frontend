@@ -1,33 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Lantern</title>
-    <link rel="stylesheet" type="text/css" href="style/main.css">
-    <link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
+	<title>Lantern</title>
+	<link rel="stylesheet" type="text/css" href="style/main.css">
+	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
 </head>
 <body class="noselect">
-    <div class="container">
-        <div class="centered">
-            <section class="box">
-                <header>
-                    <button class="icon close">Cancel</button>
-                    <h1>New query</h1>
-                    <button class="icon ok">Save</button>
-                </header>
-                
-                <form>
-                    <label for="name">Name</label>
-                    <input type="text" name="name" id="name" placeholder="E.g. emails">
-                    <label>Query</label>
-                    <input type="hidden" name="query" value="">
-                </form>
+	<div class="container">
+		<div class="centered">
+			<section class="box">
+				<header>
+					<button class="icon close">Cancel</button>
+					<h1>New query</h1>
+					<button class="icon ok">Save</button>
+				</header>
+				
+				<form>
+					<label for="name">Name</label>
+					<input type="text" name="name" id="name" placeholder="E.g. emails">
+					<label>Query</label>
+					<input type="hidden" name="query" value="">
+				</form>
 
-                <div id="query-builder">
-                    <canvas id="query-builder-canvas"></canvas>
-                </div>
-            </section>
-        </div>
-    </div>
-    <script type="text/javascript" src="javascript/query.js"></script>
+				<div id="query-builder">
+					<canvas id="query-builder-canvas"></canvas>
+
+					<div id="query-builder-menu">
+						<label for="type-input">Type</label>
+						<label class="select-box">
+							<select name="type" id="type-input">
+								<option value="empty" selected>None</option>
+								<option value="regexp">Regexp</option>
+								<option value="text">Text</option>
+								<option value="list">List</option>
+								<option value="operator">Operator</option>
+							</select>
+						</label>
+
+						<div class="filter regexp">
+							<label>Regexp</label>
+							<input type="text" name="regexp-input" placeholder="Regexp" data-property="regexp">
+						</div>
+
+						<div class="filter operator">
+							<label>Operator</label>
+							<label class="select-box">
+								<select name="type" data-property="operator">
+									<option value="AND">And</option>
+									<option value="OR">Or</option>
+								</select>
+							</label>
+						</div>
+					</div>
+				</div>
+			</section>
+		</div>
+	</div>
+	<script type="text/javascript" src="javascript/query.js"></script>
 </body>
 </html>
