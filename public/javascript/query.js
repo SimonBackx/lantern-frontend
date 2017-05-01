@@ -47,7 +47,12 @@ document.addEventListener("mousemove", function(){
         var y = event.pageY - queryBuilder.documentOffsetTop;
         var query = rootQuery.find(y);
 
+        rootQuery.resetSimulation();
+
         if (canSwitchQueries(currentMovingQuery, query)) {
+            currentMovingQuery.simulatedParent = query.parent;
+            query.simulatedParent = currentMovingQuery.parent;
+            
             rootQuery.calculatePosition(25, 10, false);
             query.setMovingOffset(currentMovingQuery.calculatedX - query.calculatedX + 20, currentMovingQuery.calculatedY - query.calculatedY);
             needsAnimation();
@@ -60,7 +65,8 @@ document.addEventListener("mousemove", function(){
     }
 }, false);
 
-document.addEventListener("mouseup", function(){
+document.addEventListener("mouseup", function() {
+    rootQuery.resetSimulation();
     if (currentMovingQuery) {
         var offset = queryBuilder.documentOffsetTop;
         var y = event.pageY - offset;
@@ -91,6 +97,7 @@ function Query() {
     this.element = document.createElement("div");
     this.element.className = "empty query";
     this.parent = null;
+    this.simulatedParent = null;
 
     this.replace = function() {};
 }
@@ -136,10 +143,14 @@ Query.prototype.draw = function(ctx) {
     ctx.beginPath();
     ctx.moveTo(this.x, this.y + boxHeight/2);
 
-    if (this.parent === null) {
-        ctx.lineTo(0, this.y + boxHeight/2);
+    if (this.simulatedParent === null) {
+        if (this.parent === null) {
+            ctx.lineTo(0, this.y + boxHeight/2);
+        } else {
+            ctx.lineTo(this.parent.x + indentWidth, this.parent.y + boxHeight/2);
+        }
     } else {
-        ctx.lineTo(this.x, this.parent.y + boxHeight/2);
+        ctx.lineTo(this.simulatedParent.x + indentWidth, this.simulatedParent.y + boxHeight/2);
     }
 
     ctx.stroke();
@@ -204,13 +215,8 @@ Query.prototype.step = function(container) {
     return true;
 }
 
-Query.prototype.restoreSimulation = function() {
-    this.simulate = null;
-}
-
-Query.prototype.endSimulation = function() {
-    // todo: opslaan
-    this.simulate = null;
+Query.prototype.resetSimulation = function() {
+    this.simulatedParent = null;
 }
 
 function OperatorQuery(first, last) {
@@ -310,15 +316,13 @@ OperatorQuery.prototype.step = function(container) {
     return this.last.step(container) || f || m;
 }
 
-OperatorQuery.prototype.restoreSimulation = function() {
-    this.first.restoreSimulation();
-    this.simulate = null;
-    this.last.restoreSimulation();
+OperatorQuery.prototype.resetSimulation = function() {
+    this.first.resetSimulation();
+    Query.prototype.resetSimulation.call(this);
+    this.last.resetSimulation();
 }
 
-
 var rootQuery = null;
-
 
 
 var queryBuilder = document.getElementById('query-builder');
