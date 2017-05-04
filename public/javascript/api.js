@@ -2,9 +2,16 @@ var SERVER = "http://localhost:8080"
 var api_user = "secret";
 var api_key = "secret";
 
-function Request(method, url) {
+// body is optional
+function Request(method, url, body) {
     this.method = method;
     this.url = url;
+    this.body = null;
+
+    if (arguments.length >= 3) {
+        this.body = body;
+    }
+
     this.responseType = "text";
     this.http = new XMLHttpRequest();
     this.onSuccess = function(status, response) {};
@@ -35,11 +42,16 @@ Request.prototype.send = function(){
     http.open(this.method, SERVER + this.url);
     http.setRequestHeader("X-API-USER", api_user);
     http.setRequestHeader("X-API-KEY", api_key);
-    http.send();
+
+    if (this.body === null) {
+        http.send();
+    } else {
+        http.send(this.body);
+    }
 }
 
 
-/*var test = new Request("GET", "/queries");
+/*var test = new Request("GET",s "/queries");
 test.acceptJSON();
 test.onSuccess = function(status, response) {
     console.log(status);

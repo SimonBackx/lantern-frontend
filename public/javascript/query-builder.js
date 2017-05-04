@@ -2,7 +2,8 @@
 /**
  * De QueryBuilder beheert de interface die het toelaat om queries aan te passen.
  */
-function QueryBuilder(queryAction) {
+function QueryBuilder() {
+    this.query = null;
     this.root = null;
     this.selected = null;
     this.animationInterval = null;
@@ -11,6 +12,17 @@ function QueryBuilder(queryAction) {
     this.menu = document.getElementById('query-builder-menu');
     this.menuType = document.getElementById('type-input');
     this.canvas = document.getElementById('query-builder-canvas');
+    this.nameInput = document.getElementById('name-input');
+
+    this.nameInput.addEventListener("keydown", function() {
+        me.didUpdateName(this);
+    });
+    this.nameInput.addEventListener("keyup", function() {
+        me.didUpdateName(this);
+    });
+    this.nameInput.addEventListener("change", function() {
+        me.didUpdateName(this);
+    });
 
     // todo: verwijder bestaande event listeners
     
@@ -64,6 +76,9 @@ function QueryBuilder(queryAction) {
             ignoreDown = false;
             return;
         }
+        if (!me.root) {
+            return;
+        }
 
         var event = window.event || event;
         var button = event.which || event.button;
@@ -115,6 +130,10 @@ function QueryBuilder(queryAction) {
     });
 
     document.addEventListener("mouseup", function() {
+        if (!me.root) {
+            return;
+        }
+
         ignoreDown = false;
         me.root.resetSimulation();
         if (currentMovingQuery) {
@@ -128,13 +147,26 @@ function QueryBuilder(queryAction) {
         me.update();
         me.needsAnimation();
     });
+};
 
-    this.setRootQuery(queryAction);
+QueryBuilder.prototype.setQuery = function(query) {
+    var queryAction = unmarshalQueryAction(query.root);
+    if (this.root === null) {
+        this.setRootQuery(queryAction);
+    } else {
+        this.replaceRoot(queryAction);
+    }
 
-    // Canvas resize
-    this.updateCanvasSize();
+    this.query = query;
+    this.nameInput.value = query.name;
+    this.update();
+};
 
-    this.redraw();
+QueryBuilder.prototype.didUpdateName = function(input) {
+    if (!this.query) {
+        return;
+    }
+    this.query.name = input.value;
 };
 
 QueryBuilder.prototype.onBecomeVisible = function() {
@@ -275,6 +307,12 @@ QueryBuilder.prototype.setSelectedQuery = function(query) {
     }
 };
 
+QueryBuilder.prototype.replaceRoot = function(query) {
+    this.root.remove();
+    this.setRootQuery(query);
+    this.setSelectedQuery(null);
+};
+
 QueryBuilder.prototype.setRootQuery = function(query) {
     var builder = this;
     query.replace = function(q) {
@@ -289,7 +327,6 @@ QueryBuilder.prototype.setRootQuery = function(query) {
 };
 
 QueryBuilder.prototype.needsAnimation = function() {
-    console.log("needs animation");
     if (this.animationInterval === null) {
 
         var builder = this;
@@ -300,7 +337,6 @@ QueryBuilder.prototype.needsAnimation = function() {
 };
 
 QueryBuilder.prototype.animationLoop = function() {
-    console.log("animation loop");
     if (!this.root.step(this.element)) {
         clearInterval(this.animationInterval);
         this.animationInterval = null;

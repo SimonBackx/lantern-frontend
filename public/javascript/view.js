@@ -36,7 +36,30 @@ ViewController.prototype.setView = function(view) {
     this.visibleView = view
 }
 
+function MainView() {
+    View.call(this, "main-view");
+    this.queries = [];
+}
 
+MainView.prototype = Object.create(View.prototype);
+MainView.prototype.didAppear = function() {
+    View.prototype.didAppear.call(this);
+    var request = new Request("GET", "/queries");
+    request.acceptJSON();
+    var me = this;
+    request.onSuccess = function(status, response) {
+        console.log(status);
+        console.log(response);
+        me.setQueries(QueriesFromArray(response));
+    }
+    request.send();
+};
+
+MainView.prototype.setQueries = function(queries) {
+    this.queries = queries;
+
+    // todo: view updaten...
+}
 
 function EditQueryView() {
     View.call(this, "edit-query-view");
@@ -48,10 +71,12 @@ EditQueryView.prototype = Object.create(View.prototype);
 
 EditQueryView.prototype.setQuery = function(query) {
     this.query = query;
+    this.builder.setQuery(this.query);
 };
 
 EditQueryView.prototype.newQuery = function() {
-    this.setQuery(null);
+    this.query = new Query();
+    this.builder.setQuery(this.query);
 };
 
 EditQueryView.prototype.didAppear = function() {
@@ -64,6 +89,39 @@ function editQuery(query) {
     viewController.setView(editQueryView);
 }
 
-var mainView = new View("main-view");
+function newQuery() {
+    editQueryView.newQuery();
+    viewController.setView(editQueryView);
+}
+
+// save query!
+function saveQuery() {
+    var query = editQueryView.builder.query;
+
+    if (query.name < 3) {
+        alert("Name too short");
+        return;
+    }
+
+    if (!editQueryView.builder.root.isValid()) {
+        alert("Invalid query.");
+        return;
+    }
+    query.root = editQueryView.builder.root.marshal();
+
+    var request = new Request("POST", "/query", query.stringify());
+    //request.acceptJSON();
+    request.onSuccess = function(status, response) {
+        alert("Saving succeeded");
+        viewController.setView(mainView);
+    }
+
+    request.onFailure = function(status, response) {
+        alert("Saving failed: "+response);
+    }
+    request.send();
+}
+
+var mainView = new MainView();
 var editQueryView = new EditQueryView();
 viewController.setView(mainView);

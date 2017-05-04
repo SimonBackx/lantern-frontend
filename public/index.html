@@ -10,16 +10,15 @@
 		<div class="centered">
 			<section class="box">
 				<header>
-					<button class="icon close">Cancel</button>
+					<button class="icon close" onclick="viewController.setView(mainView);">Cancel</button>
 					<h1>New query</h1>
-					<button class="icon ok">Save</button>
+					<button class="icon ok" onclick="saveQuery();">Save</button>
 				</header>
 				
 				<form>
-					<label for="name">Name</label>
-					<input type="text" name="name" id="name" placeholder="E.g. emails">
+					<label for="name-input">Name</label>
+					<input type="text" name="name" id="name-input" placeholder="E.g. emails">
 					<label>Query</label>
-					<input type="hidden" name="query" value="">
 				</form>
 
 				<div id="query-builder">
@@ -81,7 +80,7 @@
                 <header>
                     <button class="icon close">Logout</button>
                     <h1>Queries</h1>
-                    <button class="icon plus" onclick="editQuery(null);">New query</button>
+                    <button class="icon plus" onclick="newQuery();">New query</button>
                 </header>
                 
                 <table>

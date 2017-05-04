@@ -19,10 +19,47 @@ Object.defineProperty( Element.prototype, 'documentOffsetLeft', {
     }
 } );
 
-function Query(name, queryAction) {
-    this.name = name;
+function Query(obj) {
+    this.id = null;
+    this.name = "";
     this.createdOn = null;
-    this.root = queryAction;
+    this.root = {};
+
+    if (arguments.length >= 1) {
+        this.id = obj["_id"];
+        this.name = obj["name"];
+        this.createdOn = obj["createdOn"];
+        this.root = obj["root"];
+    }
+}
+
+Query.prototype.stringify = function() {
+    var obj = {
+        'name': this.name,
+        'root': this.root
+    };
+
+    if (this.id !== null) {
+        obj["_id"] = this.id;
+    }
+
+    if (this.createdOn !== null) {
+        obj["createdOn"] = this.createdOn;
+    }
+
+    return JSON.stringify(obj);
+}
+
+function QueriesFromArray(json) {
+    if (!Array.isArray(json)) {
+        return [];
+    } 
+    var arr = [];
+    for (var i = 0; i < json.length; i++) {
+        var queryJson = json[i];
+        arr.push(new Query(queryJson));
+    }
+    return arr;
 }
 
 function QueryAction() {
@@ -270,7 +307,7 @@ OperatorQuery.prototype.setLast = function(query) {
     };
 }
 
-RegexpQuery.prototype.isValid = function() {
+OperatorQuery.prototype.isValid = function() {
     return this.first.isValid() && this.last.isValid();
 }
 
@@ -469,7 +506,7 @@ function switchQueries(first, last) {
 
 function unmarshalQueryAction(obj) {
     if (!obj.type) {
-        return QueryAction();
+        return new QueryAction();
     }
 
     switch(obj.type) {
