@@ -6,7 +6,7 @@
 	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
 </head>
 <body class="noselect">
-	<div class="container">
+	<div class="container" id="edit-query-view" style="display: none;">
 		<div class="centered">
 			<section class="box">
 				<header>
@@ -74,6 +74,77 @@
 			</section>
 		</div>
 	</div>
+
+	<div class="container" id="main-view" style="display: none;">
+        <div class="centered">
+            <section class="box">
+                <header>
+                    <button class="icon close">Logout</button>
+                    <h1>Queries</h1>
+                    <button class="icon plus" onclick="editQuery(null);">New query</button>
+                </header>
+                
+                <table>
+                    <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Results</th>
+                          <th>Age</th>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                        <tr>
+                          <td>Email addresses</td>
+                          <td>13 (+2 new)</td>
+                          <td>3 days</td>
+                          <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
 	<script type="text/javascript" src="javascript/query.js"></script>
+	<script type="text/javascript" src="javascript/api.js"></script>
+	<script type="text/javascript" src="javascript/query-builder.js"></script>
+	<script type="text/javascript" src="javascript/view.js"></script>
 </body>
 </html>

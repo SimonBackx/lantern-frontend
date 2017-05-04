@@ -7,7 +7,6 @@ var whisper = "#EAE9F3";
 var AND_OPERATOR = "AND";
 var OR_OPERATOR = "OR";
 
-var currentMovingQuery = null;
 
 Object.defineProperty( Element.prototype, 'documentOffsetTop', {
     get: function () { 
@@ -20,7 +19,13 @@ Object.defineProperty( Element.prototype, 'documentOffsetLeft', {
     }
 } );
 
-function Query() {
+function Query(name, queryAction) {
+    this.name = name;
+    this.createdOn = null;
+    this.root = queryAction;
+}
+
+function QueryAction() {
     this.type = "empty"
     this.x = null;
     this.y = null;
@@ -31,6 +36,7 @@ function Query() {
     this.calculatedY = 0;
 
     this.selected = false;
+    this.moving = false;
 
     this.velocityX = 0;
     this.velocityY = 0;
@@ -43,7 +49,7 @@ function Query() {
     this.replace = function() {};
 }
 
-Query.prototype.calculatePosition = function(x, y) {
+QueryAction.prototype.calculatePosition = function(x, y) {
 
     this.goalX = x;
     this.goalY = y;
@@ -54,15 +60,12 @@ Query.prototype.calculatePosition = function(x, y) {
     if (this.x === null && this.y === null) {
         this.x = x;
         this.y = y;
-    } else {
-        if (this.goalX != this.x || this.goalY != this.y) {
-            needsAnimation();
-        }
     }
+    
     return boxHeight;
 }
 
-Query.prototype.hasParent = function(query) {
+QueryAction.prototype.hasParent = function(query) {
     if (this.parent === null) {
         return false;
     }
@@ -73,33 +76,45 @@ Query.prototype.hasParent = function(query) {
     return this.parent.hasParent(query);
 }
 
-Query.prototype.find = function(y) {
+QueryAction.prototype.find = function(y) {
     return this;
 }
 
-Query.prototype.split = function() {
+QueryAction.prototype.marshal = function() {
+    return {'type': this.type};
+}
+
+QueryAction.prototype.deepCopy = function() {
+    return unmarshalQueryAction(this.marshal);
+}
+
+QueryAction.prototype.isValid = function(y) {
+    return false;
+}
+
+QueryAction.prototype.split = function() {
     var replace = this.replace;
-    var operator = new OperatorQuery(this, new Query());
+    var operator = new OperatorQuery(this, new QueryAction());
     replace.call(this, operator);
 }
 
-Query.prototype.removeDOM = function() {
+QueryAction.prototype.removeDOM = function() {
     if (this.element)
         this.element.parentNode.removeChild(this.element);
 }
 
-Query.prototype.remove = function() {
+QueryAction.prototype.remove = function() {
     this.replace(null);
     this.removeDOM();
 }
 
-Query.prototype.replaceWith = function(query) {
+QueryAction.prototype.replaceWith = function(query) {
     this.replace(query);
     if (this.element)
         this.element.parentNode.removeChild(this.element);
 }
 
-Query.prototype.draw = function(ctx) {
+QueryAction.prototype.draw = function(ctx) {
     ctx.strokeStyle = whisper;
     ctx.lineWidth = 2;
 
@@ -120,18 +135,18 @@ Query.prototype.draw = function(ctx) {
     ctx.closePath();
 }
 
-Query.prototype.setOffset = function(x, y, container) {
+QueryAction.prototype.setOffset = function(x, y, container) {
     this.x = this.calculatedX + x;
     this.y = this.calculatedY + y;
     this.updateDOM(container);
 }
 
-Query.prototype.setMovingOffset = function(x, y, container) {
+QueryAction.prototype.setMovingOffset = function(x, y, container) {
     this.goalX = this.calculatedX + x;
     this.goalY = this.calculatedY + y;
 }
 
-Query.prototype.updateDOM = function(container) {
+QueryAction.prototype.updateDOM = function(container) {
     if (!this.element.parentElement) {
         container.appendChild(this.element);
     }
@@ -139,15 +154,15 @@ Query.prototype.updateDOM = function(container) {
     this.element.style.left = this.x+"px";
     this.element.style.top = this.y+"px";
 
-    if (this === selectedQuery) {
+    if (this.selected || this.moving) {
         this.element.className = this.type+" query selected";
     } else {
         this.element.className = this.type+" query";
     }
 }
 
-Query.prototype.step = function(container) {
-    if (this.selected) {
+QueryAction.prototype.step = function(container) {
+    if (this.moving) {
         this.updateDOM(container);
         return false;
     }
@@ -185,24 +200,47 @@ Query.prototype.step = function(container) {
     return true;
 }
 
-Query.prototype.resetSimulation = function() {
+QueryAction.prototype.resetSimulation = function() {
     this.simulatedParent = null;
 }
 
-function OperatorQuery(first, last) {
-    Query.call(this);
+QueryAction.prototype.resetSelected = function() {
+    this.selected = false;
+}
+
+/**
+ * @param QueryAction first    
+ * @param QueryAction last
+ * @param optional string operator = "AND"
+ */
+function OperatorQuery(first, last, operator) {
+    QueryAction.call(this);
     this.setFirst(first);
     this.setLast(last);
     this.firstHeight = 0;
     this.lastHeight = 0;
     this.type = "operator"
 
-    this.operator = AND_OPERATOR;
+    if (arguments.length < 3) {
+        this.operator = AND_OPERATOR;
+    } else {
+        this.operator = operator;
+    }
 
     this.element.className = "operator query";
 }
 
-OperatorQuery.prototype = Object.create(Query.prototype);
+function OperatorQueryFromJson(json) {
+    var first = unmarshalQueryAction(json.first);
+    var last = unmarshalQueryAction(json.last);
+    if (json.operator) {
+        return new OperatorQuery(first, last, json.operator);
+    }
+    
+    return new OperatorQuery(first, last);
+}
+
+OperatorQuery.prototype = Object.create(QueryAction.prototype);
 
 OperatorQuery.prototype.setFirst = function(query) {
     query.parent = this;
@@ -232,6 +270,18 @@ OperatorQuery.prototype.setLast = function(query) {
     };
 }
 
+RegexpQuery.prototype.isValid = function() {
+    return this.first.isValid() && this.last.isValid();
+}
+
+OperatorQuery.prototype.marshal = function() {
+    var obj = QueryAction.prototype.marshal.call(this);
+    obj['first'] = this.first.marshal();
+    obj['last'] = this.last.marshal();
+    obj['operator'] = this.operator;
+    return obj;
+}
+
 OperatorQuery.prototype.calculatePosition = function(x, y) {
     this.firstHeight = this.first.calculatePosition(x + indentWidth, y);
 
@@ -244,10 +294,6 @@ OperatorQuery.prototype.calculatePosition = function(x, y) {
     if (this.x === null && this.y === null) {
         this.x = this.goalX;
         this.y = this.goalY;
-    } else {
-        if (this.goalX != this.x || this.goalY != this.y) {
-            needsAnimation();
-        }
     }
 
     this.lastHeight = this.last.calculatePosition(this.goalX + indentWidth, this.goalY + boxMargin + boxHeight);
@@ -256,13 +302,13 @@ OperatorQuery.prototype.calculatePosition = function(x, y) {
 
 OperatorQuery.prototype.draw = function(ctx) {
     this.first.draw(ctx);
-    Query.prototype.draw.call(this, ctx);
+    QueryAction.prototype.draw.call(this, ctx);
     this.last.draw(ctx);
 }
 
 OperatorQuery.prototype.removeDOM = function() {
     this.first.removeDOM();
-    Query.prototype.removeDOM.call(this);
+    QueryAction.prototype.removeDOM.call(this);
     this.last.removeDOM();
 }
 
@@ -278,333 +324,130 @@ OperatorQuery.prototype.find = function(y) {
 
 OperatorQuery.prototype.setOffset = function(x, y, container) {
     this.first.setOffset(x, y,container);
-    Query.prototype.setOffset.call(this, x, y, container);
+    QueryAction.prototype.setOffset.call(this, x, y, container);
     this.last.setOffset(x, y, container);
 }
 
 OperatorQuery.prototype.setMovingOffset = function(x, y, container) {
     this.first.setMovingOffset(x, y,container);
-    Query.prototype.setMovingOffset.call(this, x, y, container);
+    QueryAction.prototype.setMovingOffset.call(this, x, y, container);
     this.last.setMovingOffset(x, y, container);
 }
 
 OperatorQuery.prototype.step = function(container) {
-    if (this.selected) {
-        return Query.prototype.step.call(this, container);
+    if (this.moving) {
+        return QueryAction.prototype.step.call(this, container);
     }
 
     var f = this.first.step(container);
-    var m = Query.prototype.step.call(this, container);
+    var m = QueryAction.prototype.step.call(this, container);
 
     return this.last.step(container) || f || m;
 }
 
 OperatorQuery.prototype.resetSimulation = function() {
     this.first.resetSimulation();
-    Query.prototype.resetSimulation.call(this);
+    QueryAction.prototype.resetSimulation.call(this);
     this.last.resetSimulation();
 }
 
+OperatorQuery.prototype.resetSelected = function() {
+    this.first.resetSelected();
+    QueryAction.prototype.resetSelected.call(this);
+    this.last.resetSelected();
+}
+
 OperatorQuery.prototype.updateDOM = function(container) {
-    Query.prototype.updateDOM.call(this, container);
+    QueryAction.prototype.updateDOM.call(this, container);
 
     this.element.innerText = this.operator;
 }
 
-function RegexpQuery() {
-    Query.call(this);
+function RegexpQuery(json) {
+    QueryAction.call(this);
     this.type = "regexp";
-    this.regexp = "";
+
+    if (arguments.length == 0 || !json.regexp) {
+        this.regexp = "";
+    } else {
+        this.regexp = json.regexp;
+    }
+}
+RegexpQuery.prototype = Object.create(QueryAction.prototype);
+
+RegexpQuery.prototype.isValid = function() {
+    // todo: regexp verificatie
+    return true;
 }
 
-RegexpQuery.prototype = Object.create(Query.prototype);
+RegexpQuery.prototype.marshal = function() {
+    var obj = QueryAction.prototype.marshal.call(this);
+    obj['regexp'] = this.regexp;
+    return obj;
+}
+
 RegexpQuery.prototype.updateDOM = function(container) {
-    Query.prototype.updateDOM.call(this, container);
+    QueryAction.prototype.updateDOM.call(this, container);
 
     this.element.innerText = this.regexp;
 }
 
-function TextQuery() {
-    Query.call(this);
+function TextQuery(json) {
+    QueryAction.call(this);
     this.type = "text";
-    this.text = "";
+
+    if (arguments.length == 0 || !json.text) {
+        this.text = "";
+    } else {
+        this.text = json.text;
+    }
+}
+TextQuery.prototype = Object.create(QueryAction.prototype);
+
+TextQuery.prototype.isValid = function() {
+    return this.text.length > 0;
 }
 
-TextQuery.prototype = Object.create(Query.prototype);
+TextQuery.prototype.marshal = function() {
+    var obj = QueryAction.prototype.marshal.call(this);
+    obj['text'] = this.text;
+    return obj;
+}
+
 TextQuery.prototype.updateDOM = function(container) {
-    Query.prototype.updateDOM.call(this, container);
+    QueryAction.prototype.updateDOM.call(this, container);
 
     this.element.innerText = this.text;
 }
 
-function ListQuery() {
-    Query.call(this);
+function ListQuery(json) {
+    QueryAction.call(this);
     this.type = "list";
-    this.list = [];
+
+    if (arguments.length == 0 || !json.list) {
+        this.list = [];
+    } else {
+        this.list = json.list;
+    }
+}
+ListQuery.prototype = Object.create(QueryAction.prototype);
+
+ListQuery.prototype.isValid = function() {
+    return this.list.length > 0;
 }
 
-ListQuery.prototype = Object.create(Query.prototype);
+ListQuery.prototype.marshal = function() {
+    var obj = QueryAction.prototype.marshal.call(this);
+
+    // Deep copy van list maken
+    obj['list'] = this.list.slice();
+    return obj;
+}
+
 ListQuery.prototype.updateDOM = function(container) {
-    Query.prototype.updateDOM.call(this, container);
+    QueryAction.prototype.updateDOM.call(this, container);
 
     this.element.innerText = "List["+this.list.length+"]";
-}
-
-var rootQuery = null;
-var selectedQuery = null;
-
-var queryBuilder = document.getElementById('query-builder');
-var queryBuilderMenu = document.getElementById('query-builder-menu');
-var queryBuilderMenuType = document.getElementById('type-input');
-queryBuilderMenuType.addEventListener("change", function() {
-    if (selectedQuery === null || selectedQuery.type == "operator") {
-        return;
-    }
-
-    // Type aanpassen
-    var type = queryBuilderMenuType.value;
-    queryBuilderMenu.className = type+"-selected";
-
-    var replaceWith = selectedQuery;
-
-    switch(type) {
-        case "empty":
-            replaceWith = new Query();
-            break;
-        case "regexp":
-            replaceWith = new RegexpQuery();
-            break;
-        case "text":
-            replaceWith = new TextQuery();
-            break;
-        case "list":
-            replaceWith = new ListQuery();
-            break;
-    }
-
-    if (selectedQuery.element)
-        selectedQuery.element.parentNode.removeChild(selectedQuery.element);
-    selectedQuery.replace(replaceWith);
-    
-    setSelectedQuery(replaceWith);
-
-    updateBuilder();
-});
-
-var updateInputElement = function() {
-    var prop = this.getAttribute("data-property");
-    if (!prop || !selectedQuery) {
-        return;
-    }
-
-    var type = this.getAttribute("data-type");
-    if (type && type == "array") {
-        var value = this.value;
-        selectedQuery[prop] = value.replace("\n\r", "\n").split("\n");
-    } else {
-        selectedQuery[prop] = this.value;
-    }
-    updateBuilder();
-};
-
-var inputElements = queryBuilderMenu.querySelectorAll("input,select,textarea");
-var i;
-for (i = 0; i < inputElements.length; i++) {
-    var element = inputElements[i];
-    element.addEventListener("keydown", function() {
-        updateInputElement.call(this);
-    });
-    element.addEventListener("keyup", function() {
-        updateInputElement.call(this);
-    });
-    element.addEventListener("change", function() {
-        updateInputElement.call(this);
-    });
-}
-
-document.getElementById('split-button').addEventListener("click", function() {
-    if (!selectedQuery) {
-        return;
-    }
-    selectedQuery.split();
-    setSelectedQuery(selectedQuery.parent);
-    updateBuilder();
-});
-
-document.getElementById('remove-button').addEventListener("click", function() {
-    if (!selectedQuery) {
-        return;
-    }
-    selectedQuery.remove();
-    setSelectedQuery(null);
-    updateBuilder();
-});
-
-function setSelectedQuery(query) {
-    if (query === null) {
-        queryBuilderMenu.style.display = "none";
-        return;
-    }
-    queryBuilderMenu.style.display = "";
-
-    selectedQuery = query;
-    queryBuilderMenuType.value = query.type;
-    queryBuilderMenu.className = query.type+"-selected";
-
-    for (i = 0; i < inputElements.length; i++) {
-        var element = inputElements[i];
-        var prop = element.getAttribute("data-property");
-        if (!prop) {
-            continue;
-        }
-
-        if (!query[prop]) {
-            element.value = "";
-            continue;
-        }
-
-        var type = element.getAttribute("data-type");
-        if (type && type == "array") {
-            element.value = query[prop].join("\n");
-        } else {
-            element.value = query[prop];
-        }
-    }
-}
-
-function setRootQuery(query) {
-    query.replace = function(q) {
-        if (q === null) {
-            return;
-        }
-        setRootQuery(q);
-    }
-    query.parent = null;
-    rootQuery = query;
-}
-
-var mouseStartX = 0;
-var mouseStartY = 0;
-
-var ignoreDown = false;
-
-queryBuilderMenu.addEventListener("mousedown", function(event){
-    ignoreDown = true;
-});
-queryBuilder.addEventListener("mousedown", function(event){
-    if (ignoreDown) {
-        ignoreDown = false;
-        return;
-    }
-
-    currentMovingQuery = null;
-
-    mouseStartX = event.pageX;
-    mouseStartY = event.pageY;
-
-    var offset = queryBuilder.documentOffsetTop;
-    var y = event.pageY - offset;
-
-    if (y < 0) {
-        return;
-    }
-
-    var query = rootQuery.find(y);
-    setSelectedQuery(query);
-    currentMovingQuery = query;
-    currentMovingQuery.selected = true;
-    updateBuilder();
-}, false);
-
-document.addEventListener("mousemove", function(){
-    if (currentMovingQuery) {
-        var y = event.pageY - queryBuilder.documentOffsetTop;
-        var query = rootQuery.find(y);
-
-        rootQuery.resetSimulation();
-
-        if (canSwitchQueries(currentMovingQuery, query)) {
-            currentMovingQuery.simulatedParent = query.parent;
-            query.simulatedParent = currentMovingQuery.parent;
-
-            rootQuery.calculatePosition(25, 10, false);
-            query.setMovingOffset(currentMovingQuery.calculatedX - query.calculatedX + 20, currentMovingQuery.calculatedY - query.calculatedY);
-            needsAnimation();
-        } else {
-            rootQuery.calculatePosition(25, 10, false);
-            needsAnimation();
-        }
-
-        currentMovingQuery.setOffset(event.pageX - mouseStartX, event.pageY - mouseStartY);
-    }
-}, false);
-
-document.addEventListener("mouseup", function() {
-    ignoreDown = false;
-    rootQuery.resetSimulation();
-    if (currentMovingQuery) {
-        var offset = queryBuilder.documentOffsetTop;
-        var y = event.pageY - offset;
-        var query = rootQuery.find(y);
-        switchQueries(currentMovingQuery, query);
-        currentMovingQuery.selected = false;
-    }
-    currentMovingQuery = null;
-    updateBuilder();
-}, false);
-
-
-
-if (queryBuilder) {
-    var queryBuilderCanvas = document.getElementById('query-builder-canvas');
-    function updateCanvasSize() {
-        queryBuilderCanvas.width = queryBuilder.offsetWidth;
-        queryBuilderCanvas.height = queryBuilder.offsetHeight;
-        queryBuilderCanvas.style.width = queryBuilder.offsetWidth;
-        queryBuilderCanvas.style.height = queryBuilder.offsetHeight;
-    }
-    updateCanvasSize();
-
-    window.onresize = function(event) {
-        updateCanvasSize();
-        rootQuery.draw(queryBuilderCanvas.getContext("2d"));
-    };
-
-    var myLeft = new Query();
-    var myRight = new Query();
-    var op = new OperatorQuery(myLeft, myRight);
-    
-    setRootQuery(op);
-
-    var extra = new OperatorQuery(new Query(), new Query());
-    var extra2 = new OperatorQuery(new Query(), new Query());
-    extra_op = new OperatorQuery(extra, extra2);
-    rootQuery.setFirst(extra_op);
-    updateBuilder();
-}
-
-
-function updateBuilder()  {
-    rootQuery.calculatePosition(25, 10, false);
-    rootQuery.step(queryBuilder);
-    rootQuery.draw(queryBuilderCanvas.getContext("2d"));
-}
-
-var animationInterval = null;
-
-function needsAnimation() {
-    if (animationInterval === null) {
-        animationInterval = setInterval(animationLoop, 5);
-    }
-}
-
-function animationLoop() {
-    if (!rootQuery.step(queryBuilder)) {
-        clearInterval(animationInterval);
-        animationInterval = null;
-    }
-    queryBuilderCanvas.getContext("2d").clearRect(0, 0, queryBuilderCanvas.width, queryBuilderCanvas.height);
-    rootQuery.draw(queryBuilderCanvas.getContext("2d"));
 }
 
 function canSwitchQueries(first, last) {
@@ -622,4 +465,22 @@ function switchQueries(first, last) {
     var replaceFunc = last.replace;
     first.replace(last);
     replaceFunc.call(last, first);
+}
+
+function unmarshalQueryAction(obj) {
+    if (!obj.type) {
+        return QueryAction();
+    }
+
+    switch(obj.type) {
+        case "regexp":
+            return new RegexpQuery(obj);
+        case "text":
+            return new TextQuery(obj);
+        case "list":
+            return new ListQuery(obj);
+        case "operator":
+            return OperatorQueryFromJson(obj);
+    }
+    return new QueryAction();
 }
