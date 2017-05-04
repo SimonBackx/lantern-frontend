@@ -126,6 +126,10 @@
             -ms-flex: 1 0 0;
             -webkit-flex: 1;
             flex: 1 0 0;
+
+            tr {
+                cursor: pointer;
+            }
         }
     }
 

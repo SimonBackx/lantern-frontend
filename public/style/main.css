@@ -285,6 +285,8 @@ textarea {
       -ms-flex: 1 0 0;
       -webkit-flex: 1;
       flex: 1 0 0; }
+      .box table tbody tr {
+        cursor: pointer; }
   .box canvas {
     -ms-flex: 1 0 0;
     -webkit-flex: 1;
