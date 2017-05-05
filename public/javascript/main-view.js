@@ -57,7 +57,6 @@ function queryToRow(query) {
     var now = new Date();
 
     var seconds = Math.round(Math.max(0, (now.getTime() - date.getTime()) / 1000) );
-    console.log(seconds);
     if (seconds > 1 || seconds == 0) {
         days.innerText = Math.round(seconds)+" seconds";
     } else {
@@ -121,7 +120,8 @@ function queryToRow(query) {
     tr.appendChild(document.createElement("td"));
 
     tr.addEventListener("click", function() {
-        editQuery(query);
+        viewController.setView(new ResultsView(query));
+        //editQuery(query);
     })
 
     return tr;

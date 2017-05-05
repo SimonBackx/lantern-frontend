@@ -33,6 +33,10 @@ function Query(obj) {
     }
 }
 
+Query.prototype.isNew = function() {
+    return this.id === null;
+}
+
 Query.prototype.stringify = function() {
     var obj = {
         'name': this.name,

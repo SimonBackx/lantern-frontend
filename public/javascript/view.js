@@ -7,7 +7,9 @@ View.prototype.willAppear = function() {};
 View.prototype.didAppear = function() {};
 View.prototype.willDisappear = function() {};
 View.prototype.didDisappear = function() {};
-
+View.prototype.getElement = function() {
+    return document.getElementById(this.id);
+};
 
 var viewController = new ViewController();
 
@@ -24,9 +26,9 @@ ViewController.prototype.setView = function(view) {
 
     // todo: animatie hier toevoegen
     if (this.visibleView) {
-        document.getElementById(this.visibleView.id).style.display = "none";
+        this.visibleView.getElement().style.display = "none";
     }
-    document.getElementById(view.id).style.display = "";
+    view.getElement().style.display = "";
 
     if (this.visibleView) {
         this.visibleView.didDisappear();

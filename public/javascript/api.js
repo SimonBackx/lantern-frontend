@@ -1,4 +1,4 @@
-var SERVER = "http://localhost:8080"
+var SERVER = "http://localhost:8080/api"
 var api_user = "secret";
 var api_key = "secret";
 

@@ -14,6 +14,8 @@ function QueryBuilder() {
     this.canvas = document.getElementById('query-builder-canvas');
     this.nameInput = document.getElementById('name-input');
 
+    this.deleteButton = document.getElementById('edit-query-delete-button');
+
     this.nameInput.addEventListener("keydown", function() {
         me.didUpdateName(this);
     });
@@ -160,6 +162,12 @@ QueryBuilder.prototype.setQuery = function(query) {
     this.query = query;
     this.nameInput.value = query.name;
     this.update();
+
+    if (query.isNew()) {
+        this.deleteButton.style.display = "none";
+    } else {
+        this.deleteButton.style.display = "";
+    }
 };
 
 QueryBuilder.prototype.didUpdateName = function(input) {
