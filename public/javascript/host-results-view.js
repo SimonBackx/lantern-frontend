@@ -5,7 +5,7 @@ function HostResultsView(query, host) {
     this.host = host;
 
     var title = this.getElement().querySelector("header h1");
-    title.innerText = query.name;
+    title.innerText = host;
 }
 
 HostResultsView.prototype = Object.create(View.prototype);
@@ -43,18 +43,28 @@ HostResultsView.prototype.setResults = function(results) {
 function resultToRow(query, result) {
 
     var tr = document.createElement("tr");
-    var urlColumn = document.createElement("td");
-    urlColumn.innerText = result.url;
+    var resultsColumn = document.createElement("td");
 
-    var snippetColumn = document.createElement("td");
-    snippetColumn.innerText = result.snippet;
+    var title = document.createElement("h2");
+    title.innerText = result.title;
+
+    var url = document.createElement("p");
+    url.innerText = result.host+result.url;
+    url.className = "url";
+    var snippet = document.createElement("p");
+    snippet.innerText = result.snippet;
+
+    resultsColumn.appendChild(title);
+    resultsColumn.appendChild(url);
+    resultsColumn.appendChild(snippet);
 
     var dateColumn = document.createElement("td");
+
     var date = new Date(result.lastFound);
+
     dateColumn.innerText = date.toLocaleString();
 
-    tr.appendChild(snippetColumn);
-    tr.appendChild(urlColumn);
+    tr.appendChild(resultsColumn);
     tr.appendChild(dateColumn);
     tr.appendChild(document.createElement("td"));
 

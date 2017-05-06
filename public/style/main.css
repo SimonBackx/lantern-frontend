@@ -133,6 +133,8 @@ button {
       background-image: url("../images/ok.png"); }
     button.icon.plus {
       background-image: url("../images/plus.png"); }
+    button.icon.back {
+      background-image: url("../images/back.png"); }
 
 a {
   text-decoration: underline; }
@@ -269,19 +271,40 @@ textarea {
     .box table th, .box table td {
       display: table-cell;
       padding: 15px 0;
-      box-sizing: border-box; }
+      box-sizing: border-box;
+      white-space: pre-wrap;
+      /* CSS3 */
+      white-space: -moz-pre-wrap;
+      /* Firefox */
+      white-space: -pre-wrap;
+      /* Opera <7 */
+      white-space: -o-pre-wrap;
+      /* Opera 7 */
+      word-wrap: break-word;
+      /* IE */
+      padding-right: 10px; }
       .box table th:nth-child(1), .box table td:nth-child(1) {
-        width: 50%;
         padding-left: 25px; }
       .box table th:nth-child(2), .box table td:nth-child(2) {
         width: 20%; }
       .box table th:nth-child(3), .box table td:nth-child(3) {
         width: 20%;
-        text-align: right;
         padding-right: 25px; }
-      .box table th:nth-child(4), .box table td:nth-child(4) {
+      .box table th:last-child, .box table td:last-child {
         width: 50px; }
-    .box table td:nth-child(4) {
+      .box table th h2, .box table td h2 {
+        font-size: 19px;
+        margin-top: 10px;
+        margin-bottom: 5px;
+        color: #090522; }
+      .box table th p, .box table td p {
+        font-size: 16px;
+        margin: 0;
+        margin-bottom: 10px; }
+        .box table th p.url, .box table td p.url {
+          color: #3119C3;
+          margin-bottom: 0px; }
+    .box table td:last-child {
       background: url("../images/next.png") 10px center no-repeat; }
     .box table tr {
       width: 100%;
