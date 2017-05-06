@@ -120,7 +120,7 @@ function queryToRow(query) {
     tr.appendChild(document.createElement("td"));
 
     tr.addEventListener("click", function() {
-        viewController.setView(new ResultsView(query));
+        viewController.push(new ResultsView(query));
         //editQuery(query);
     })
 

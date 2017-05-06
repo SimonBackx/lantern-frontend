@@ -14,7 +14,8 @@ View.prototype.getElement = function() {
 var viewController = new ViewController();
 
 function ViewController() {
-    this.visibleView = null
+    this.visibleView = null;
+    this.stack = [];
 }
 
 ViewController.prototype.setView = function(view) {
@@ -36,4 +37,14 @@ ViewController.prototype.setView = function(view) {
     view.didAppear();
     
     this.visibleView = view
+}
+
+ViewController.prototype.push = function(view) {
+    this.stack.push(view)
+    this.setView(view)
+}
+
+ViewController.prototype.pop = function() {
+    this.stack.pop()
+    this.setView(this.stack[this.stack.length - 1])
 }

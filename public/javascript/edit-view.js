@@ -23,12 +23,12 @@ EditQueryView.prototype.didAppear = function() {
 
 function editQuery(query) {
     editQueryView.setQuery(query);
-    viewController.setView(editQueryView);
+    viewController.push(editQueryView);
 }
 
 function newQuery() {
     editQueryView.newQuery();
-    viewController.setView(editQueryView);
+    viewController.push(editQueryView);
 }
 
 // save query!
@@ -50,7 +50,7 @@ function saveQuery() {
     //request.acceptJSON();
     request.onSuccess = function(status, response) {
         alert("Saving succeeded");
-        viewController.setView(mainView);
+        viewController.pop();
     }
 
     request.onFailure = function(status, response) {

@@ -10,7 +10,7 @@
 		<div class="centered">
 			<section class="box">
 				<header>
-					<button class="icon close" onclick="viewController.setView(new ResultsView(viewController.visibleView.query));">Cancel</button>
+					<button class="icon close" onclick="viewController.pop();">Cancel</button>
 					<h1>New query</h1>
                     <div>
                         <div>
@@ -110,7 +110,7 @@
         <div class="centered">
             <section class="box">
                 <header>
-                    <button class="icon close" onclick="viewController.setView(mainView);">Back</button>
+                    <button class="icon close" onclick="viewController.pop();">Back</button>
                     <h1>Results</h1>
                     <button class="icon plus" onclick="editQuery(viewController.visibleView.query);">Edit query</button>
                 </header>
@@ -119,7 +119,7 @@
                     <thead>
                         <tr>
                           <th>Hidden service url</th>
-                          <th>Snippet</th>
+                          <th>Results</th>
                           <th>Date</th>
                           <th></th>
                         </tr>
@@ -131,11 +131,35 @@
         </div>
     </div>
 
+    <div class="container" id="host-results-view" style="display: none;">
+        <div class="centered">
+            <section class="box">
+                <header>
+                    <button class="icon close" onclick="viewController.pop();">Back</button>
+                    <h1>Host results</h1>
+                </header>
+                
+                <table>
+                    <thead>
+                        <tr>
+                          <th>Snippet</th>
+                          <th>Url</th>
+                          <th>Date</th>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="host-results-table-body">
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
     <div class="container" id="result-view" style="display: none;">
         <div class="centered">
             <section class="box">
                 <header>
-                    <button class="icon close" onclick="viewController.setView(new ResultsView(viewController.visibleView.query));">Back</button>
+                    <button class="icon close" onclick="viewController.pop();">Back</button>
                     <h1>https://www.google.com</h1>
                 </header>
                 <iframe sandbox="">
@@ -155,6 +179,7 @@
 	<script type="text/javascript" src="javascript/edit-view.js"></script>
      <script type="text/javascript" src="javascript/result-view.js"></script>
     <script type="text/javascript" src="javascript/results-view.js"></script>
+    <script type="text/javascript" src="javascript/host-results-view.js"></script>
 	<script type="text/javascript" src="javascript/main.js"></script>
 
     <script type="text/javascript" src="javascript/sanitizer.js"></script>

@@ -1,30 +1,31 @@
-function ResultsView(query) {
-    View.call(this, "results-view");
+function HostResultsView(query, host) {
+    View.call(this, "host-results-view");
     this.results = [];
     this.query = query;
+    this.host = host;
 
     var title = this.getElement().querySelector("header h1");
     title.innerText = query.name;
 }
 
-ResultsView.prototype = Object.create(View.prototype);
-ResultsView.prototype.didAppear = function() {
+HostResultsView.prototype = Object.create(View.prototype);
+HostResultsView.prototype.didAppear = function() {
     View.prototype.didAppear.call(this);
-    var request = new Request("GET", "/results/"+this.query.id);
+    var request = new Request("GET", "/results/"+this.query.id+"?host="+encodeURI(this.host));
     request.acceptJSON();
     var me = this;
     request.onSuccess = function(status, response) {
         console.log(status);
         console.log(response);
-        me.setResults(AggregatedResultsFromArray(response));
+        me.setResults(ResultsFromArray(response));
     }
     request.send();
 };
 
-ResultsView.prototype.setResults = function(results) {
+HostResultsView.prototype.setResults = function(results) {
     this.results = results;
 
-    var body = document.getElementById("results-table-body");
+    var body = document.getElementById("host-results-table-body");
 
     // Leeg maken
     while (body.firstChild) {
@@ -34,34 +35,31 @@ ResultsView.prototype.setResults = function(results) {
     // Nieuwe rijen toevoegen
     for (var i = 0; i < results.length; i++) {
         var result = results[i];
-        var row = aggregatedResultToRow(this.query, result);
+        var row = resultToRow(this.query, result);
         body.appendChild(row);
     }
-    
 }
 
+function resultToRow(query, result) {
 
-function aggregatedResultToRow(query, result) {
     var tr = document.createElement("tr");
-    var hostColumn = document.createElement("td");
-    hostColumn.innerText = result.host;
+    var urlColumn = document.createElement("td");
+    urlColumn.innerText = result.url;
 
-    var countColumn = document.createElement("td");
-    countColumn.innerText = result.count;
+    var snippetColumn = document.createElement("td");
+    snippetColumn.innerText = result.snippet;
 
     var dateColumn = document.createElement("td");
-
     var date = new Date(result.lastFound);
-
     dateColumn.innerText = date.toLocaleString();
 
-    tr.appendChild(hostColumn);
-    tr.appendChild(countColumn);
+    tr.appendChild(snippetColumn);
+    tr.appendChild(urlColumn);
     tr.appendChild(dateColumn);
     tr.appendChild(document.createElement("td"));
 
     tr.addEventListener("click", function() {
-        viewController.push(new HostResultsView(query, result.host));
+        viewController.push(new ResultView(query, result));
     });
 
     return tr;
