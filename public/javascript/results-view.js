@@ -3,7 +3,7 @@ function ResultsView(query) {
     this.results = [];
     this.query = query;
 
-    var title = this.getElement().querySelector("header h1");
+    var title = this.getElement().querySelector("header h2");
     title.innerText = query.name;
 }
 

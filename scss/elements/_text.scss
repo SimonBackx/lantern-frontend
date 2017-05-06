@@ -45,6 +45,10 @@ button {
             background-image: url("../images/back.png");
         }
     }
+
+    &:hover {
+        color: $persian-blue;
+    }
 }
 
 a {

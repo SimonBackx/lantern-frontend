@@ -135,6 +135,8 @@ button {
       background-image: url("../images/plus.png"); }
     button.icon.back {
       background-image: url("../images/back.png"); }
+  button:hover {
+    color: #3119C3; }
 
 a {
   text-decoration: underline; }
@@ -228,13 +230,20 @@ textarea {
     position: relative;
     -webkit-flex: 0; }
     .box header h1 {
-      color: #090522;
-      text-align: center; }
+      color: #090522; }
+    .box header h2, .box header h1 {
+      word-wrap: nowrap;
+      white-space: nowrap;
+      text-align: center;
+      margin: 0 100px 5px 100px;
+      overflow: hidden; }
+    .box header h2 {
+      color: #3119C3;
+      font-weight: 500; }
     .box header > button, .box header > div {
       position: absolute;
       top: 20px;
-      bottom: 0;
-      color: #1A0E64; }
+      bottom: 0; }
       .box header > button:first-child, .box header > div:first-child {
         left: 25px; }
       .box header > button:last-child, .box header > div:last-child {
@@ -328,6 +337,8 @@ textarea {
       flex: 1 0 0; }
       .box table tbody tr {
         cursor: pointer; }
+        .box table tbody tr:hover {
+          background-color: #F1F0F5; }
   .box canvas {
     -ms-flex: 1 0 0;
     -webkit-flex: 1;

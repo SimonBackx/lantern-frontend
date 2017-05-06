@@ -35,14 +35,26 @@
 
         h1 {
             color: $black-pearl;
+        }
+
+        h2, h1 {
+            word-wrap: nowrap;
+            white-space: nowrap;
             text-align: center;
+            margin: 0 100px 5px 100px;
+            overflow: hidden;
+        }
+
+        h2 {
+            color: $persian-blue;
+            font-weight: 500;
         }
 
         >button, >div {
             position: absolute;
             top: 20px;
             bottom: 0;
-            color: $arapawa;
+            //color: $arapawa;
 
             &:first-child {
                 left: $horizontal-margin;
@@ -157,6 +169,7 @@
             &:nth-child(even) {
                 background-color: $selago;
             }
+
         }
 
         thead {
@@ -177,6 +190,10 @@
 
             tr {
                 cursor: pointer;
+
+                &:hover {
+                    background-color: #F1F0F5;
+                }
             }
         }
     }

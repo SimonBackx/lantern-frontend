@@ -23,7 +23,11 @@ ResultView.prototype.setResult = function(result) {
     this.result = result;
 
     var title = this.getElement().querySelector("header h1");
+    title.innerText = result.title;
+
+    title = this.getElement().querySelector("header h2");
     title.innerText = result.url;
+
 
     // Remove current iframe
     var iframe = this.getElement().querySelector("iframe");

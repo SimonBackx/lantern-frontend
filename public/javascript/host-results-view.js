@@ -4,7 +4,7 @@ function HostResultsView(query, host) {
     this.query = query;
     this.host = host;
 
-    var title = this.getElement().querySelector("header h1");
+    var title = this.getElement().querySelector("header h2");
     title.innerText = host;
 }
 
