@@ -21,10 +21,16 @@ MainView.prototype.setQueries = function(queries) {
     this.queries = queries;
 
     var body = document.getElementById("main-table-body");
-
+    
     // Leeg maken
     while (body.firstChild) {
         body.removeChild(body.firstChild);
+    }
+
+    if (queries.length == 0) {
+        var row = createEmptyRow("No queries");
+        body.appendChild(row);
+        return
     }
 
     // Nieuwe rijen toevoegen

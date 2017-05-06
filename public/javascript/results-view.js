@@ -38,6 +38,12 @@ ResultsView.prototype.setResults = function(results) {
     var body = document.getElementById("results-table-body");
     this.clearResults();
 
+    if (results.length == 0) {
+        var row = createEmptyRow("No results");
+        body.appendChild(row);
+        return
+    }
+
     // Nieuwe rijen toevoegen
     for (var i = 0; i < results.length; i++) {
         var result = results[i];

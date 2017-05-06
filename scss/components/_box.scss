@@ -169,7 +169,6 @@
             &:nth-child(even) {
                 background-color: $selago;
             }
-
         }
 
         thead {
@@ -193,6 +192,17 @@
 
                 &:hover {
                      opacity: 0.5;
+                }
+
+                &.empty {
+                    opacity: 0.5;
+                    cursor: default;
+
+                    td {
+                        background: none;
+                        padding: 40px;
+                        text-align: center;
+                    }
                 }
             }
         }

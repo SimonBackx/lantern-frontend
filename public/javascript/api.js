@@ -32,7 +32,9 @@ Request.prototype.send = function(){
     http.onreadystatechange = function() {
        if (http.readyState == 4) {
             if (http.status == 200) {
-                me.onSuccess(http.status, http.response);
+                setTimeout(function() {
+                 me.onSuccess(http.status, http.response);
+                }, 300);
             } else {
                 me.onFailure(http.status, http.response);
             }

@@ -339,6 +339,13 @@ textarea {
         cursor: pointer; }
         .box table tbody tr:hover {
           opacity: 0.5; }
+        .box table tbody tr.empty {
+          opacity: 0.5;
+          cursor: default; }
+          .box table tbody tr.empty td {
+            background: none;
+            padding: 40px;
+            text-align: center; }
   .box canvas {
     -ms-flex: 1 0 0;
     -webkit-flex: 1;

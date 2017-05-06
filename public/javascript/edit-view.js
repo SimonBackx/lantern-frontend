@@ -9,11 +9,17 @@ EditQueryView.prototype = Object.create(View.prototype);
 EditQueryView.prototype.setQuery = function(query) {
     this.query = query;
     this.builder.setQuery(this.query);
+
+    var title = this.getElement().querySelector("header h1");
+    title.innerText = "Edit query";
 };
 
 EditQueryView.prototype.newQuery = function() {
     this.query = new Query();
     this.builder.setQuery(this.query);
+
+    var title = this.getElement().querySelector("header h1");
+    title.innerText = "New query";
 };
 
 EditQueryView.prototype.didAppear = function() {
