@@ -136,7 +136,7 @@ button {
     button.icon.back {
       background-image: url("../images/back.png"); }
   button:hover {
-    color: #3119C3; }
+    opacity: 0.5; }
 
 a {
   text-decoration: underline; }
@@ -338,7 +338,7 @@ textarea {
       .box table tbody tr {
         cursor: pointer; }
         .box table tbody tr:hover {
-          background-color: #F1F0F5; }
+          opacity: 0.5; }
   .box canvas {
     -ms-flex: 1 0 0;
     -webkit-flex: 1;

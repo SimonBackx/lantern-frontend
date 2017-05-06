@@ -11,6 +11,7 @@ function HostResultsView(query, host) {
 HostResultsView.prototype = Object.create(View.prototype);
 HostResultsView.prototype.didAppear = function() {
     View.prototype.didAppear.call(this);
+    this.clearResults();
     var request = new Request("GET", "/results/"+this.query.id+"?host="+encodeURI(this.host));
     request.acceptJSON();
     var me = this;
@@ -22,15 +23,20 @@ HostResultsView.prototype.didAppear = function() {
     request.send();
 };
 
-HostResultsView.prototype.setResults = function(results) {
-    this.results = results;
-
+HostResultsView.prototype.clearResults = function() {
     var body = document.getElementById("host-results-table-body");
 
     // Leeg maken
     while (body.firstChild) {
         body.removeChild(body.firstChild);
     }
+}
+
+HostResultsView.prototype.setResults = function(results) {
+    this.results = results;
+
+    var body = document.getElementById("host-results-table-body");
+    this.clearResults();
 
     // Nieuwe rijen toevoegen
     for (var i = 0; i < results.length; i++) {
@@ -39,6 +45,23 @@ HostResultsView.prototype.setResults = function(results) {
         body.appendChild(row);
     }
 }
+
+HostResultsView.prototype.deleteAll = function() {
+    if (!confirm("Are you sure you want to delete all results?")) {
+        return
+    }
+
+    var request = new Request("DELETE", "/results/"+encodeURI(this.query.id)+"?host="+encodeURI(this.host));
+    request.onSuccess = function(status, response) {
+        alert("Deleting succeeded");
+        viewController.pop();
+    }
+
+    request.onFailure = function(status, response) {
+        alert("Deleting failed: "+response);
+    }
+    request.send();
+};
 
 function resultToRow(query, result) {
 

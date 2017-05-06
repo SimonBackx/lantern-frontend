@@ -58,3 +58,21 @@ function saveQuery() {
     }
     request.send();
 }
+
+function deleteQuery() {
+    if (!confirm("Are you sure you want to delete this query?")) {
+        return
+    }
+
+    var query = editQueryView.builder.query;
+    var request = new Request("DELETE", "/query/"+encodeURI(query.id));
+    request.onSuccess = function(status, response) {
+        alert("Deleting succeeded");
+        viewController.pop();
+    }
+
+    request.onFailure = function(status, response) {
+        alert("Deleting failed: "+response);
+    }
+    request.send();
+}

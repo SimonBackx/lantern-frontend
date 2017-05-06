@@ -45,18 +45,4 @@ ResultView.prototype.setResult = function(result) {
     iframe.contentWindow.document.write(result.body);
     iframe.contentWindow.document.close();
     iframe.contentWindow.document.body.style.fontFamily = "'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
-
-
-    // Leeg maken
-    /*while (body.firstChild) {
-        body.removeChild(body.firstChild);
-    }
-
-    // Nieuwe rijen toevoegen
-    for (var i = 0; i < results.length; i++) {
-        var result = results[i];
-        var row = resultToRow(result);
-        body.appendChild(row);
-    }*/
-    
 }
