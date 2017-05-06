@@ -24,12 +24,14 @@ function Query(obj) {
     this.name = "";
     this.createdOn = null;
     this.root = {};
+    this.results = 0;
 
     if (arguments.length >= 1) {
         this.id = obj["_id"];
         this.name = obj["name"];
         this.createdOn = obj["createdOn"];
         this.root = obj["root"];
+        this.results = obj["results"];
     }
 }
 

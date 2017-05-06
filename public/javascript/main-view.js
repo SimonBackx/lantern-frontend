@@ -6,6 +6,8 @@ function MainView() {
 MainView.prototype = Object.create(View.prototype);
 MainView.prototype.didAppear = function() {
     View.prototype.didAppear.call(this);
+    this.clearQueries();
+
     var request = new Request("GET", "/queries");
     request.acceptJSON();
     var me = this;
@@ -14,18 +16,29 @@ MainView.prototype.didAppear = function() {
         console.log(response);
         me.setQueries(QueriesFromArray(response));
     }
+
+    request.onFailure = function(status, response) {
+        var body = document.getElementById("main-table-body");
+        var row = createEmptyRow("Failed to load queries.");
+        body.appendChild(row);
+    }
     request.send();
 };
 
-MainView.prototype.setQueries = function(queries) {
-    this.queries = queries;
-
-    var body = document.getElementById("main-table-body");
+MainView.prototype.clearQueries = function() {
+     var body = document.getElementById("main-table-body");
     
     // Leeg maken
     while (body.firstChild) {
         body.removeChild(body.firstChild);
     }
+}
+
+MainView.prototype.setQueries = function(queries) {
+    this.queries = queries;
+
+    var body = document.getElementById("main-table-body");
+    this.clearQueries();
 
     if (queries.length == 0) {
         var row = createEmptyRow("No queries");
@@ -55,7 +68,7 @@ function queryToRow(query) {
     name.innerText = query.name;
 
     var results = document.createElement("td");
-    results.innerText = "0 results";
+    results.innerText = query.results+" results";
 
     var days = document.createElement("td");
 

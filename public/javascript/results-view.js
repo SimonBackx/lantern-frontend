@@ -19,7 +19,14 @@ ResultsView.prototype.didAppear = function() {
         console.log(status);
         console.log(response);
         me.setResults(AggregatedResultsFromArray(response));
-    }
+    };
+
+    request.onFailure = function(status, response) {
+        var body = document.getElementById("results-table-body");
+        var row = createEmptyRow("Failed to load results.");
+        body.appendChild(row);
+    };
+
     request.send();
 };
 
@@ -83,7 +90,7 @@ function aggregatedResultToRow(query, result) {
 
     var date = new Date(result.lastFound);
 
-    dateColumn.innerText = date.toLocaleString();
+    dateColumn.innerText = formatDate(date);
 
     tr.appendChild(hostColumn);
     tr.appendChild(countColumn);

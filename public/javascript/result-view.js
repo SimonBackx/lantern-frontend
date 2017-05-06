@@ -15,20 +15,16 @@ ResultView.prototype.didAppear = function() {
         console.log(status);
         console.log(response);
         me.setResult(new Result(response));
-    }
+    };
+
+    request.onFailure = function(status, response) {
+        me.setIframe("Failed to load result.");
+    };
+
     request.send();
 };
 
-ResultView.prototype.setResult = function(result) {
-    this.result = result;
-
-    var title = this.getElement().querySelector("header h1");
-    title.innerText = result.title;
-
-    title = this.getElement().querySelector("header h2");
-    title.innerText = result.url;
-
-
+ResultView.prototype.setIframe = function(content) {
     // Remove current iframe
     var iframe = this.getElement().querySelector("iframe");
     var parent = null;
@@ -42,7 +38,23 @@ ResultView.prototype.setResult = function(result) {
     iframe.setAttribute("sandbox", "allow-same-origin");
     parent.appendChild(iframe);
     iframe.contentWindow.document.open();
-    iframe.contentWindow.document.write(result.body);
+    iframe.contentWindow.document.write(content);
     iframe.contentWindow.document.close();
     iframe.contentWindow.document.body.style.fontFamily = "'Roboto', 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+}
+
+ResultView.prototype.setResult = function(result) {
+    this.result = result;
+
+    var title = this.getElement().querySelector("header h1");
+    title.innerText = result.title;
+
+    title = this.getElement().querySelector("header h2");
+    title.innerText = result.url;
+
+    if (result.body) {
+        this.setIframe(result.body);
+    } else {
+        this.setIframe("");
+    }
 }

@@ -19,7 +19,14 @@ HostResultsView.prototype.didAppear = function() {
         console.log(status);
         console.log(response);
         me.setResults(ResultsFromArray(response));
-    }
+    };
+
+    request.onFailure = function(status, response) {
+        var body = document.getElementById("host-results-table-body");
+        var row = createEmptyRow("Failed to load results.");
+        body.appendChild(row);
+    };
+
     request.send();
 };
 
@@ -85,7 +92,7 @@ function resultToRow(query, result) {
 
     var date = new Date(result.lastFound);
 
-    dateColumn.innerText = date.toLocaleString();
+    dateColumn.innerText = formatDate(date);
 
     tr.appendChild(resultsColumn);
     tr.appendChild(dateColumn);
