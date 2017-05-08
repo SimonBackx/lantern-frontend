@@ -1,3 +1,8 @@
-var mainView = new MainView();
-var editQueryView = new EditQueryView();
-viewController.push(mainView);
+
+loadToken();
+
+if (api_logged_in) {
+    viewController.push(new MainView());
+} else {
+    viewController.push(new LoginView());
+}

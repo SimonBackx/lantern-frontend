@@ -72,3 +72,13 @@ textarea {
         }
     }
 }
+
+input[type=submit] {
+    background: $arapawa;
+    color: white;
+    border-radius: 40px;
+    font-weight: 500;
+    font-size: 19px;
+    cursor: pointer;
+    margin-top: 20px;
+}

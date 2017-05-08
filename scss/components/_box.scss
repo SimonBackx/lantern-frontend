@@ -28,6 +28,19 @@
     -webkit-flex-direction: column;
     flex-direction: column;
 
+    &.small {
+        height: auto;
+        width: auto;
+        max-width: 400px;
+        padding-bottom: $horizontal-margin;
+
+        header {
+            h1, h2 {
+                margin: 0;
+            }
+        }
+    }
+
     header {
         padding: 50px $horizontal-margin 30px $horizontal-margin;
         position: relative;

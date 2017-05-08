@@ -1,6 +1,39 @@
 var SERVER = "http://localhost:8080/api"
-var api_user = "secret";
-var api_key = "secret";
+var api_user = null;
+var api_key = null;
+var api_logged_in = false;
+
+function logout() {
+    setToken();
+    viewController.clear(new LoginView(), ANIMATION_LEFT_TO_RIGHT);
+}
+
+function setToken(user, key) {
+    if (arguments.length == 0 || !user || !key) {
+        api_user = null;
+        api_key = null;
+        api_logged_in = false;
+        localStorage.removeItem("user");
+        localStorage.removeItem("key");
+    } else {
+        api_user = user;
+        api_key = key;
+        api_logged_in = true;
+        localStorage.setItem("user", user);
+        localStorage.setItem("key", key);
+    }
+}
+
+function loadToken() {
+    var user = localStorage.getItem("user");
+    var key = localStorage.getItem("key");
+
+    if (user && key) {
+        api_user = user;
+        api_key = key;
+        api_logged_in = true;
+    }
+}
 
 // body is optional
 function Request(method, url, body) {
@@ -34,16 +67,24 @@ Request.prototype.send = function(){
             if (http.status == 200) {
                 setTimeout(function() {
                  me.onSuccess(http.status, http.response);
-                }, 300);
+                }, 200);
             } else {
-                me.onFailure(http.status, http.response);
+                if (http.status == 401) {
+                    // Unauthorized
+                    logout();
+                } else {
+                    me.onFailure(http.status, http.response);
+                }
             }
        }
     }
 
     http.open(this.method, SERVER + this.url);
-    http.setRequestHeader("X-API-USER", api_user);
-    http.setRequestHeader("X-API-KEY", api_key);
+
+    if (api_logged_in) {
+        http.setRequestHeader("X-API-USER", api_user);
+        http.setRequestHeader("X-API-KEY", api_key);
+    }
 
     if (this.body === null) {
         http.send();

@@ -87,6 +87,11 @@ ViewController.prototype.pop = function() {
     this.setView(this.stack[this.stack.length - 1]);
 }
 
+ViewController.prototype.clear = function(view, animation) {
+    this.stack = [view];
+    this.setView(view, animation);
+}
+
 function createEmptyRow(text) {
     var tr = document.createElement("tr");
     tr.className = "empty";

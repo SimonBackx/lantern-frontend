@@ -201,6 +201,15 @@ textarea {
     .select-box select option {
       color: #1A0E64; }
 
+input[type=submit] {
+  background: #1A0E64;
+  color: white;
+  border-radius: 40px;
+  font-weight: 500;
+  font-size: 19px;
+  cursor: pointer;
+  margin-top: 20px; }
+
 .container {
   display: table;
   width: 100%;
@@ -225,6 +234,13 @@ textarea {
   -ms-flex-direction: column;
   -webkit-flex-direction: column;
   flex-direction: column; }
+  .box.small {
+    height: auto;
+    width: auto;
+    max-width: 400px;
+    padding-bottom: 25px; }
+    .box.small header h1, .box.small header h2 {
+      margin: 0; }
   .box header {
     padding: 50px 25px 30px 25px;
     position: relative;
@@ -443,6 +459,8 @@ textarea {
     display: block; }
   #query-builder-menu.operator-selected .filter.operator {
     display: block; }
+  #query-builder-menu.operator-selected .ignore.operator {
+    display: none; }
   #query-builder-menu.list-selected .filter.list {
     display: block; }
   #query-builder-menu.text-selected .filter.text {

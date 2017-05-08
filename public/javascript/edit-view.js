@@ -1,45 +1,40 @@
-function EditQueryView() {
+function EditQueryView(query) {
     View.call(this, "edit-query-view");
-    this.query = null;
-    this.builder = new QueryBuilder(new QueryAction());
-}
-
-EditQueryView.prototype = Object.create(View.prototype);
-
-EditQueryView.prototype.setQuery = function(query) {
     this.query = query;
+    this.builder = new QueryBuilder();
     this.builder.setQuery(this.query);
 
     var title = this.getElement().querySelector("header h1");
-    title.innerText = "Edit query";
-};
 
-EditQueryView.prototype.newQuery = function() {
-    this.query = new Query();
-    this.builder.setQuery(this.query);
-
-    var title = this.getElement().querySelector("header h1");
-    title.innerText = "New query";
-};
+    if (this.query.id) {
+        title.innerText = "Edit query";
+    } else {
+        title.innerText = "New query";
+    }
+}
+EditQueryView.prototype = Object.create(View.prototype);
 
 EditQueryView.prototype.didAppear = function() {
     View.prototype.didAppear.call(this);
     this.builder.onBecomeVisible();
 };
 
+EditQueryView.prototype.willDisappear = function() {
+    View.prototype.didAppear.call(this);
+    this.builder.willHide();
+};
+
 function editQuery(query) {
-    editQueryView.setQuery(query);
-    viewController.push(editQueryView);
+    viewController.push(new EditQueryView(query));
 }
 
 function newQuery() {
-    editQueryView.newQuery();
-    viewController.push(editQueryView);
+    viewController.push(new EditQueryView(new Query()));
 }
 
 // save query!
 function saveQuery() {
-    var query = editQueryView.builder.query;
+    var query = viewController.visibleView.builder.query;
 
     if (query.name < 3) {
         alert("Name too short");
@@ -70,7 +65,7 @@ function deleteQuery() {
         return
     }
 
-    var query = editQueryView.builder.query;
+    var query = viewController.visibleView.builder.query;
     var request = new Request("DELETE", "/query/"+encodeURI(query.id));
     request.onSuccess = function(status, response) {
         alert("Deleting succeeded");

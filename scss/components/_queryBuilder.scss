@@ -108,6 +108,10 @@
         .filter.operator {
             display: block;
         }
+
+        .ignore.operator {
+            display: none;
+        }
     }
     &.list-selected {
         .filter.list {

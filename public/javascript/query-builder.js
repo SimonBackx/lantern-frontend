@@ -1,4 +1,3 @@
-
 /**
  * De QueryBuilder beheert de interface die het toelaat om queries aan te passen.
  */
@@ -16,13 +15,13 @@ function QueryBuilder() {
 
     this.deleteButton = document.getElementById('edit-query-delete-button');
 
-    this.nameInput.addEventListener("keydown", function() {
+    setListener(this.nameInput, "keydown", function() {
         me.didUpdateName(this);
     });
-    this.nameInput.addEventListener("keyup", function() {
+    setListener(this.nameInput, "keyup", function() {
         me.didUpdateName(this);
     });
-    this.nameInput.addEventListener("change", function() {
+    setListener(this.nameInput, "change", function() {
         me.didUpdateName(this);
     });
 
@@ -30,31 +29,33 @@ function QueryBuilder() {
     
     // Luisteren naar wijzigen van type
     var me = this;
-    this.menuType.addEventListener("change", function() {
-       me.didUpdateQueryType();
-    });
 
     // Luisteren naar aanpassingen van inputs in het menu
     this.inputElements = this.menu.querySelectorAll("input,select,textarea");
     for (var i = 0; i < this.inputElements.length; i++) {
         var element = this.inputElements[i];
-        element.addEventListener("keydown", function() {
+        setListener(element, "keydown", function() {
             me.didUpdateInput(this);
         });
-        element.addEventListener("keyup", function() {
+        setListener(element, "keyup", function() {
             me.didUpdateInput(this);
         });
-        element.addEventListener("change", function() {
+        setListener(element, "change", function() {
             me.didUpdateInput(this);
         });
     }
 
+    // Na de loop doen, anders wordt het overschreven!
+    setListener(this.menuType, "change", function() {
+       me.didUpdateQueryType();
+    });
+
     // Luisteraars voor actie knoppen
-    document.getElementById('split-button').addEventListener("click", function() {
+    setListener(document.getElementById('split-button'), "click", function() {
         me.splitSelectedQuery();
     });
 
-    document.getElementById('remove-button').addEventListener("click", function() {
+    setListener(document.getElementById('remove-button'), "click", function() {
         me.removeSelectedQuery();
     });
 
@@ -69,11 +70,11 @@ function QueryBuilder() {
     var ignoreDown = false;
     var currentMovingQuery = null;
 
-    this.menu.addEventListener("mousedown", function(event){
+    setListener(this.menu, "mousedown", function(event){
         ignoreDown = true;
     });
 
-    this.element.addEventListener("mousedown", function(event){
+    setListener(this.element, "mousedown", function(event){
         if (ignoreDown) {
             ignoreDown = false;
             return;
@@ -108,7 +109,7 @@ function QueryBuilder() {
         me.update();
     });
 
-    document.addEventListener("mousemove", function(event){
+    setListener(document, "mousemove", function(event){
         if (currentMovingQuery) {
             var y = event.pageY - me.element.documentOffsetTop;
             var query = me.root.find(y);
@@ -131,7 +132,7 @@ function QueryBuilder() {
         }
     });
 
-    document.addEventListener("mouseup", function() {
+    setListener(document, "mouseup", function() {
         if (!me.root) {
             return;
         }
@@ -151,13 +152,32 @@ function QueryBuilder() {
     });
 };
 
+QueryBuilder.prototype.willHide = function() {
+    removeAllListeners(this.element, "mousedown");
+    removeAllListeners(document, "mouseup");
+    removeAllListeners(document, "mousemove");
+    
+    if (this.animationInterval) {
+        clearInterval(this.animationInterval);
+        this.animationInterval = null;
+    }
+
+    // Clear existing builder
+    var queries = this.element.querySelectorAll(".query");
+    if (queries) {
+        for (var i = 0; i < queries.length; i++) {
+            var node = queries[i];
+            node.parentNode.removeChild(node);
+            console.log("test");
+        }
+    }
+
+    this.setSelectedQuery(null);
+}
+
 QueryBuilder.prototype.setQuery = function(query) {
     var queryAction = unmarshalQueryAction(query.root);
-    if (this.root === null) {
-        this.setRootQuery(queryAction);
-    } else {
-        this.replaceRoot(queryAction);
-    }
+    this.setRootQuery(queryAction);
 
     this.query = query;
     this.nameInput.value = query.name;
@@ -197,6 +217,7 @@ QueryBuilder.prototype.update = function() {
     this.calculatePosition();
     this.root.step(this.element);
     this.redraw();
+    console.log("update builder");
 }
 
 QueryBuilder.prototype.splitSelectedQuery = function() {
@@ -282,7 +303,9 @@ QueryBuilder.prototype.setSelectedQuery = function(query) {
     this.selected = query;
     
     // Type aanpassen
-    this.menuType.value = query.type;
+    if (query.type != "operator") {
+        this.menuType.value = query.type;
+    }
 
     // Inputs zichtbaar maken voor dit type query
     this.menu.className = query.type+"-selected";
@@ -345,6 +368,7 @@ QueryBuilder.prototype.needsAnimation = function() {
 };
 
 QueryBuilder.prototype.animationLoop = function() {
+
     if (!this.root.step(this.element)) {
         clearInterval(this.animationInterval);
         this.animationInterval = null;
@@ -356,18 +380,3 @@ QueryBuilder.prototype.redraw = function() {
     this.canvas.getContext("2d").clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.root.draw(this.canvas.getContext("2d"));
 };
-
-/*
-var myLeft = new Query();
-var myRight = new Query();
-var op = new OperatorQuery(myLeft, myRight);
-
-setRootQuery(op);
-
-var extra = new OperatorQuery(new Query(), new Query());
-var extra2 = new OperatorQuery(new Query(), new Query());
-extra_op = new OperatorQuery(extra, extra2);
-rootQuery.setFirst(extra_op);
-updateBuilder();
-*/
-
