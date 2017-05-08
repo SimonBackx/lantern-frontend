@@ -28,6 +28,8 @@ LoginView.prototype.submit = function() {
             console.log(status);
             console.log(response);
             if (response && response.key && response.user) {
+                username.value = "";
+                password.value = "";
                 setToken(response.user, response.key);
                 viewController.clear(new MainView(), ANIMATION_RIGHT_TO_LEFT);
             } else {
