@@ -13,6 +13,8 @@ function LoginView() {
 
 LoginView.prototype = Object.create(View.prototype);
 LoginView.prototype.didAppear = function() {
+    var username = document.getElementById("username-input");
+    username.focus();
 };
 
 LoginView.prototype.submit = function() {

@@ -34,18 +34,19 @@ function newQuery() {
 
 // save query!
 function saveQuery() {
-    var query = viewController.visibleView.builder.query;
+    var builder = viewController.visibleView.builder;
+    var query = builder.query;
 
     if (query.name < 3) {
         alert("Name too short");
         return;
     }
 
-    if (!editQueryView.builder.root.isValid()) {
+    if (!builder.root.isValid()) {
         alert("Invalid query.");
         return;
     }
-    query.root = editQueryView.builder.root.marshal();
+    query.root = builder.root.marshal();
 
     var request = new Request("POST", "/query", query.stringify());
     //request.acceptJSON();

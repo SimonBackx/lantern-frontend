@@ -79,7 +79,7 @@ function resultToRow(query, result) {
     title.innerText = result.title;
 
     var url = document.createElement("p");
-    url.innerText = result.host+result.url;
+    url.innerText = result.url;
     url.className = "url";
     var snippet = document.createElement("p");
     snippet.innerText = result.snippet;
