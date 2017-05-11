@@ -310,13 +310,8 @@ input[type=submit] {
       padding-right: 10px; }
       .box table th:nth-child(1), .box table td:nth-child(1) {
         padding-left: 25px; }
-      .box table th:nth-child(2), .box table td:nth-child(2) {
-        width: 20%; }
-      .box table th:nth-child(3), .box table td:nth-child(3) {
-        width: 20%;
-        padding-right: 25px; }
       .box table th:last-child, .box table td:last-child {
-        width: 50px; }
+        padding-right: 25px; }
       .box table th h2, .box table td h2 {
         font-size: 19px;
         margin-top: 10px;
@@ -329,8 +324,6 @@ input[type=submit] {
         .box table th p.url, .box table td p.url {
           color: #3119C3;
           margin-bottom: 0px; }
-    .box table td:last-child {
-      background: url("../images/next.png") 10px center no-repeat; }
     .box table tr {
       width: 100%;
       display: table;
@@ -351,21 +344,28 @@ input[type=submit] {
       -ms-flex: 1 0 0;
       -webkit-flex: 1;
       flex: 1 0 0; }
-      .box table tbody tr {
-        cursor: pointer; }
-        .box table tbody tr:hover {
-          opacity: 0.5; }
-        .box table tbody tr.empty {
-          opacity: 0.5;
-          cursor: default; }
-          .box table tbody tr.empty td {
-            background: none;
-            padding: 40px;
-            text-align: center; }
-  .box canvas {
-    -ms-flex: 1 0 0;
-    -webkit-flex: 1;
-    flex: 1 0 0; }
+  .box table.arrow th:nth-child(2), .box table.arrow td:nth-child(2) {
+    width: 20%; }
+  .box table.arrow th:nth-child(3), .box table.arrow td:nth-child(3) {
+    width: 20%;
+    padding-right: 25px; }
+  .box table.arrow th:last-child, .box table.arrow td:last-child {
+    width: 25px; }
+  .box table.arrow td:last-child {
+    background: url("../images/next.png") 10px center no-repeat; }
+  .box table.arrow tbody tr {
+    cursor: pointer; }
+    .box table.arrow tbody tr:hover {
+      opacity: 0.5; }
+    .box table.arrow tbody tr.empty {
+      opacity: 0.5;
+      cursor: default; }
+      .box table.arrow tbody tr.empty td {
+        background: none;
+        padding: 40px;
+        text-align: center; }
+  .box table.half td {
+    width: 50%; }
 
 #query-builder {
   position: relative;

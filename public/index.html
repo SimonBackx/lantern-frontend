@@ -3,7 +3,6 @@
 <head>
 	<title>Lantern</title>
 	<link rel="stylesheet" type="text/css" href="style/main.css">
-	<link href="https://fonts.googleapis.com/css?family=Roboto:400,500,700" rel="stylesheet">
 </head>
 <body class="noselect">
 	<div class="container" id="edit-query-view" style="display: none;">
@@ -82,6 +81,37 @@
 		</div>
 	</div>
 
+    <div class="container" id="stats-view" style="display: none;">
+        <div class="centered">
+            <section class="box">
+                <header>
+                    <button class="icon close" onclick="viewController.pop();">Back</button>
+                    <h1>Statistics</h1>
+                </header>
+                
+                <table class="half">
+                    <thead>
+                        <tr>
+                          <th>Graphs</th>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><canvas id="stat1" width="400" height="400"></canvas></td>
+                            <td><canvas id="stat2" width="400" height="400"></canvas></td>
+                        </tr>
+                        <tr>
+                            <td><canvas id="stat3" width="400" height="400"></canvas></td>
+                            <td><canvas id="stat4" width="400" height="400"></canvas></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+            </section>
+        </div>
+    </div>
+
     <div class="container" id="login-view" style="display: none;">
         <div class="centered">
             <section class="small box">
@@ -108,10 +138,18 @@
                 <header>
                     <button class="icon close" onclick="logout();">Logout</button>
                     <h1>Queries</h1>
-                    <button class="icon plus" onclick="newQuery();">New query</button>
+                    <div>
+                        <div>
+                            <div>
+                                <button class="icon plus" onclick="newQuery();">New query</button>
+                                <button class="icon close" onclick="viewController.push(new StatsView());">Statistics</button>
+                            </div>
+                        </div>
+                    </div>
+                    
                 </header>
                 
-                <table>
+                <table class="arrow">
                     <thead>
                         <tr>
                           <th>Name</th>
@@ -146,7 +184,7 @@
                     
                 </header>
                 
-                <table>
+                <table class="arrow">
                     <thead>
                         <tr>
                           <th>Hidden service url</th>
@@ -172,7 +210,7 @@
                     <button class="icon close" onclick="viewController.visibleView.deleteAll();">Clear results</button>
                 </header>
                 
-                <table>
+                <table class="arrow">
                     <thead>
                         <tr>
                           <th>Results</th>
@@ -203,6 +241,7 @@
     </div>
 
     <script type="text/javascript" src="javascript/events.js"></script>
+    <script type="text/javascript" src="javascript/chart.bundle.min.js"></script>
 
 	<script type="text/javascript" src="javascript/query.js"></script>
     <script type="text/javascript" src="javascript/result.js"></script>
@@ -215,6 +254,7 @@
     <script type="text/javascript" src="javascript/results-view.js"></script>
     <script type="text/javascript" src="javascript/host-results-view.js"></script>
     <script type="text/javascript" src="javascript/login-view.js"></script>
+    <script type="text/javascript" src="javascript/stats-view.js"></script>
     <script type="text/javascript" src="javascript/velocity.min.js"></script>
     <script type="text/javascript" src="javascript/main.js"></script>
 
