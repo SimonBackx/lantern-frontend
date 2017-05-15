@@ -34,6 +34,9 @@ StatsView.prototype.processData = function(response) {
     var downloadTime = [];
     var downloadSize = [];
 
+    var memoryAlloc = [];
+    var memorySys = [];
+
     for (var i = 0; i < response.length; i++) {
         var r = response[i];
         data.push({
@@ -68,6 +71,14 @@ StatsView.prototype.processData = function(response) {
             x: new Date(r.date),
             y: r.downloadSize
         });
+        memoryAlloc.push({
+            x: new Date(r.date),
+            y: r.memoryAlloc
+        });
+        memorySys.push({
+            x: new Date(r.date),
+            y: r.memorySys
+        });
     }
 
     var axis = {
@@ -95,6 +106,7 @@ StatsView.prototype.processData = function(response) {
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
                 data: data
             },
@@ -108,6 +120,7 @@ StatsView.prototype.processData = function(response) {
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
                 data: timeouts
             }
@@ -134,6 +147,7 @@ StatsView.prototype.processData = function(response) {
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
                 data: downloadSpeed
             },
@@ -147,8 +161,23 @@ StatsView.prototype.processData = function(response) {
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
                 data: downloadSize
+            },
+            {
+                label: 'Download time per page (ms)',
+                borderColor: "rgba(69,185,225,1)",
+                backgroundColor: "rgba(69,185,225,0.4)",
+                pointBorderColor: "rgba(69,185,225,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 2,
+                pointHoverRadius: 8,
+                pointRadius: 0,
+                pointHitRadius: 10,
+                lineTension: 0,
+
+                data: downloadTime
             }]
         },
         options: {
@@ -163,17 +192,32 @@ StatsView.prototype.processData = function(response) {
         type: 'line',
         data: {
         datasets: [{
-                label: 'Download time per page (ms)',
-                borderColor: "rgba(69,185,225,1)",
-                backgroundColor: "rgba(69,185,225,0.4)",
-                pointBorderColor: "rgba(69,185,225,1)",
+                label: 'Memory allocated heap objects (KB)',
+                borderColor: "rgba(255,248,69,1)",
+                backgroundColor: "rgba(255,248,69,0.4)",
+                pointBorderColor: "rgba(255,248,69,1)",
                 pointBackgroundColor: "#fff",
                 pointBorderWidth: 2,
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
-                data: downloadTime
+                data: memoryAlloc
+            },
+            {
+                label: 'Memory obtained from the OS (KB)',
+                borderColor: "rgba(255,84,69,1)",
+                backgroundColor: "rgba(255,84,69,0.4)",
+                pointBorderColor: "rgba(255,84,69,1)",
+                pointBackgroundColor: "#fff",
+                pointBorderWidth: 2,
+                pointHoverRadius: 8,
+                pointRadius: 0,
+                pointHitRadius: 10,
+                lineTension: 0,
+
+                data: memorySys
             }]
         },
         options: {
@@ -198,6 +242,7 @@ StatsView.prototype.processData = function(response) {
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
                 data: workers
             },
@@ -212,6 +257,7 @@ StatsView.prototype.processData = function(response) {
                 pointHoverRadius: 8,
                 pointRadius: 0,
                 pointHitRadius: 10,
+                lineTension: 0,
 
                 data: domains
             }]

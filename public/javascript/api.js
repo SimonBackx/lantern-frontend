@@ -1,4 +1,4 @@
-var SERVER = "http://localhost:8080/api"
+var SERVER = "/api"
 var api_user = null;
 var api_key = null;
 var api_logged_in = false;
