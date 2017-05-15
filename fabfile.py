@@ -9,6 +9,10 @@ output['running'] = False
 
 env.hosts = ["ubuntu@lantrn.xyz"]
 
+def localDeploy():
+    with settings(hide('warnings', 'running', 'stdout')):
+        local("rsync -avh ./public/ /etc/lantern/www")
+
 def deploy():
     upload()
     print ("Done.")
