@@ -65,9 +65,7 @@ Request.prototype.send = function(){
     http.onreadystatechange = function() {
        if (http.readyState == 4) {
             if (http.status == 200) {
-                setTimeout(function() {
-                 me.onSuccess(http.status, http.response);
-                }, 200);
+                me.onSuccess(http.status, http.response);
             } else {
                 if (http.status == 401) {
                     // Unauthorized
