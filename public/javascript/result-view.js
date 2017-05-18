@@ -24,6 +24,40 @@ ResultView.prototype.didAppear = function() {
     request.send();
 };
 
+ResultView.prototype.delete = function() {
+    if (!confirm("Are you sure you want to delete this result?")) {
+        return
+    }
+
+    var request = new Request("DELETE", "/result/"+encodeURI(this.result.id));
+    request.onSuccess = function(status, response) {
+        alert("Deleting succeeded");
+        viewController.pop();
+    }
+
+    request.onFailure = function(status, response) {
+        alert("Deleting failed: "+response);
+    }
+    request.send();
+};
+
+ResultView.prototype.mark = function() {
+    var category = "important";
+    if (this.result.category != '') {
+        category = "";
+    }
+    var request = new Request("POST", "/result/"+encodeURI(this.result.id)+"/set-category", category);
+    request.onSuccess = function(status, response) {
+        alert("Marking succeeded");
+        viewController.pop();
+    }
+
+    request.onFailure = function(status, response) {
+        alert("Marking failed: "+response);
+    }
+    request.send();
+};
+
 ResultView.prototype.setIframe = function(content) {
     // Remove current iframe
     var iframe = this.getElement().querySelector("iframe");
@@ -51,6 +85,13 @@ ResultView.prototype.setResult = function(result) {
 
     title = this.getElement().querySelector("header h2");
     title.innerText = result.url;
+
+    var markingButton = this.getElement().querySelector("button.marking");
+    if (this.result.category != '') {
+        markingButton.innerText = 'Unmark';
+    } else {
+        markingButton.innerText = 'Mark';
+    }
 
     if (result.body) {
         this.setIframe(result.body);

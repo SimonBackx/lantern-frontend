@@ -177,6 +177,9 @@
                             <div>
                                 <button class="icon plus" onclick="editQuery(viewController.visibleView.query);">Edit query</button>
                                 <button class="icon close" onclick="viewController.visibleView.deleteAll();">Clear results</button>
+
+                                <button class="icon plus" onclick="viewController.push(new NewResultsView(viewController.visibleView.query));">New results</button>
+                                <button class="icon plus" onclick="viewController.push(new MarkedResultsView(viewController.visibleView.query, 'important'));">Marked results</button>
                             </div>
                         </div>
                     </div>
@@ -194,6 +197,56 @@
                         </tr>
                     </thead>
                     <tbody id="results-table-body">
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
+    <div class="container" id="new-results-view" style="display: none;">
+        <div class="centered">
+            <section class="box">
+                <header>
+                    <button class="icon back" onclick="viewController.pop();">Back</button>
+                    <h1>New results</h1>
+                    <h2>Queryname</h2>
+
+                </header>
+                
+                 <table class="arrow">
+                    <thead>
+                        <tr>
+                          <th>Results</th>
+                          <th>Date</th>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="new-results-table-body">
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </div>
+
+    <div class="container" id="marked-results-view" style="display: none;">
+        <div class="centered">
+            <section class="box">
+                <header>
+                    <button class="icon back" onclick="viewController.pop();">Back</button>
+                    <h1>Marked results</h1>
+                    <h2>Queryname</h2>
+
+                </header>
+                
+                 <table class="arrow">
+                    <thead>
+                        <tr>
+                          <th>Results</th>
+                          <th>Date</th>
+                          <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="marked-results-table-body">
                     </tbody>
                 </table>
             </section>
@@ -232,6 +285,16 @@
                     <button class="icon back" onclick="viewController.pop();">Back</button>
                     <h1>Title</h1>
                     <h2>url</h2>
+                    <div>
+                        <div>
+                            <div>
+                                <button class="icon close" onclick="viewController.visibleView.delete();">Delete result</button>
+                                <button class="marking icon close" onclick="viewController.visibleView.mark();">Mark</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    
                 </header>
                 <iframe sandbox="">
                 </iframe>
@@ -253,6 +316,9 @@
      <script type="text/javascript" src="javascript/result-view.js"></script>
     <script type="text/javascript" src="javascript/results-view.js"></script>
     <script type="text/javascript" src="javascript/host-results-view.js"></script>
+    <script type="text/javascript" src="javascript/new-results-view.js"></script>
+    <script type="text/javascript" src="javascript/marked-results-view.js"></script>
+
     <script type="text/javascript" src="javascript/login-view.js"></script>
     <script type="text/javascript" src="javascript/stats-view.js"></script>
     <script type="text/javascript" src="javascript/velocity.min.js"></script>

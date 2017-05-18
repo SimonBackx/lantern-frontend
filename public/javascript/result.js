@@ -9,6 +9,7 @@ function Result(obj) {
     this.title = "";
     this.host = "";
     this.snippet = "";
+    this.category = "";
 
     if (arguments.length >= 1) {
         this.id = obj["_id"];
@@ -20,6 +21,7 @@ function Result(obj) {
         this.title = obj["title"];
         this.host = obj["host"];
         this.snippet = obj["snippet"];
+        this.category = obj["category"];
 
         // Fix non cricital html redirect in Safari
         if (this.body) {
