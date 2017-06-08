@@ -12,7 +12,7 @@ NewResultsView.prototype.didAppear = function() {
     View.prototype.didAppear.call(this);
     this.clearResults();
 
-    var request = new Request("GET", "/results/"+this.query.id+"?nogrouping");
+    var request = new Request("GET", "/results/"+encodeURI(this.query.id)+"?nogrouping");
     request.acceptJSON();
     var me = this;
     request.onSuccess = function(status, response) {

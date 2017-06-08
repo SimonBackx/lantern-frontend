@@ -88,20 +88,6 @@ body {
   -webkit-flex-direction: column;
   flex-direction: column;
   background: #FCFCFC; }
-  body.noselect {
-    -webkit-touch-callout: none;
-    /* iOS Safari */
-    -webkit-user-select: none;
-    /* Safari */
-    -khtml-user-select: none;
-    /* Konqueror HTML */
-    -moz-user-select: none;
-    /* Firefox */
-    -ms-user-select: none;
-    /* Internet Explorer/Edge */
-    user-select: none;
-    /* Non-prefixed version, currently
-       supported by Chrome and Opera */ }
 
 p, li {
   margin: 10px 0;
@@ -317,6 +303,8 @@ input[type=submit] {
         margin-top: 10px;
         margin-bottom: 5px;
         color: #090522; }
+        .box table th h2.marked, .box table td h2.marked {
+          background: yellow; }
       .box table th p, .box table td p {
         font-size: 16px;
         margin: 0;

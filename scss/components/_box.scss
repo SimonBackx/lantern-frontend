@@ -143,6 +143,10 @@
                 margin-top: 10px;
                 margin-bottom: 5px;
                 color: $black-pearl;
+
+                &.marked {
+                    background: yellow;
+                }
             }
             p {
                 font-size: 16px;

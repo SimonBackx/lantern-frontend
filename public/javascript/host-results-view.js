@@ -78,6 +78,11 @@ function resultToRow(query, result) {
     var title = document.createElement("h2");
     title.innerText = result.title;
 
+    if (result.category != "") {
+        title.title = result.category;
+        title.className = "marked";
+    }
+
     var url = document.createElement("p");
     url.innerText = result.url;
     url.className = "url";

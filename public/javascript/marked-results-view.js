@@ -13,7 +13,7 @@ MarkedResultsView.prototype.didAppear = function() {
     View.prototype.didAppear.call(this);
     this.clearResults();
 
-    var request = new Request("GET", "/results/"+this.query.id+"?category="+encodeURI(this.category)+"&nogrouping");
+    var request = new Request("GET", "/results/"+encodeURI(this.query.id)+"?category="+encodeURI(this.category)+"&nogrouping=1");
     request.acceptJSON();
     var me = this;
     request.onSuccess = function(status, response) {
